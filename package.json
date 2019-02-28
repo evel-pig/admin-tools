@@ -7,7 +7,7 @@
     "epig-admin-tools": "./bin/index.js"
   },
   "scripts": {
-    "start": "af dev",
+    "start": "epig dev",
     "build": "gulp",
     "prepublish": "npm run build",
     "test": "jest",
@@ -60,7 +60,7 @@
     "redux-saga": "^0.16.0"
   },
   "devDependencies": {
-    "@epig/af-build-dev": "^1.0.8",
+    "@epig/af-build-dev": "^1.0.9",
     "@types/jest": "^22.0.0",
     "@types/node": "^8.5.2",
     "@types/react": "^16.3.16",
