@@ -27,7 +27,7 @@
   },
   "files": [
     "bin",
-    "src",
+    "lib",
     "tools"
   ],
   "repository": {
