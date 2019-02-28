@@ -1,0 +1,27 @@
+@import '../../util/default.less';
+
+.@{prefix-cls}-table-search-bar {
+  &-ss-input {
+    &.ant-input-group.ant-input-group-compact {
+      display: flex;
+    }
+    .ant-form-item {
+      flex-direction: row;
+      margin: 0;
+      vertical-align: top;
+      &:first-child .ant-select-selection {
+        border-right-width: 0;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      &:nth-child(2) .ant-select-selection {         
+        border-right-width: 0;
+        border-radius: 0;
+      }
+      &:last-child .ant-input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+}

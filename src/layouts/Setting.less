@@ -1,0 +1,26 @@
+@import '../util/default.less';
+
+.@{prefix-cls}-setting {
+  & {
+    position: absolute;
+    background-color: #efefef;
+    width: 100%;
+    transition: top .3s ease-out;
+    z-index: 99;
+    left: 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .28);
+  }
+  
+  &-container {
+    padding: 6px 48px;
+  }
+  
+  &-close {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 100;
+  }
+}

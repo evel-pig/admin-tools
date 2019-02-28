@@ -1,0 +1,43 @@
+import { createModel } from '@epig/admin-tools/lib/model';
+
+export interface <%= componentName %>State {
+  loading: boolean;
+}
+
+const model = createModel({
+  modelName: '<%= modelName %>',
+  action: {
+    simple: {},
+    api: {
+      <%= apiActionName %>: {
+        path: '<%= apiPath %>',
+      },
+    },
+  },
+  reducer: ({ apiActionNames, createReducer }) => {
+    return createReducer<<%= componentName %>State, any>({
+      [apiActionNames.<%= apiActionName %>.request](state, action) {
+        return {
+          ...state,
+          loading: true,
+        };
+      },
+      [apiActionNames.<%= apiActionName %>.success](state, action) {
+        return {
+          ...state,
+          loading: false,
+        };
+      },
+      [apiActionNames.<%= apiActionName %>.error](state, action) {
+        return {
+          ...state,
+          loading: false,
+        };
+      },
+    }, {
+      loading: false,
+    });
+  },
+});
+
+export default model;

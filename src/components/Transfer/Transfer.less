@@ -1,0 +1,64 @@
+@import '../../util/default.less';
+.@{prefix-cls}-transfer {
+  & {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  &-list {
+    min-width: 180px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    vertical-align: middle;
+    position: relative;
+    padding-top: 34px;
+    width: 100%;
+    height: 200px;
+  }
+  &-list-header {
+    padding: 6px 12px;
+    border-radius: 4px 4px 0 0;
+    border-bottom: 1px solid #e8e8e8;
+    background: #fff;
+    color: rgba(0, 0, 0, 0.65);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    line-height: 1.5;
+  }
+  &-title {
+    float: right;
+  }
+  &-list-body {
+    font-size: 14px;
+    position: relative;
+    height: 100%;
+    padding: 6px 12px;
+    overflow: auto;
+  }
+  &-list-item {
+    display: flex;
+    width: 100%;
+    height: 39px;
+    &-text {
+      margin-left: 2px;
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  &-operations {
+    margin: 0 8px;
+    vertical-align: middle;
+    text-align: center;
+  }
+  &-operation-btn {
+    width: 100%;
+    margin: 4px 0;
+    button {
+      width: 100%;
+    }
+  }
+}

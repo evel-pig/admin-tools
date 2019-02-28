@@ -1,0 +1,127 @@
+@import "~antd/lib/style/themes/default.less";
+@import '../../util/default.less';
+
+.my-action() {
+  cursor: pointer;
+  padding: 0 12px;
+  display: inline-block;
+  transition: all .3s;
+  height: 100%;
+  > i {
+    font-size: 16px;
+    vertical-align: middle;
+  }
+  &.ant-popover-open,
+  &:hover {
+    background: @primary-1;
+  }
+}
+
+.@{prefix-cls}-theme {
+  & {
+    .ant-dropdown-menu-item {
+      text-align: center;
+    }
+  }
+  
+  .action {
+    .my-action();
+  }
+}
+
+.custom-header-action(@action-hover-color; @color: #fff;) {
+  .action {
+    .my-action();
+    color: @color;
+    &.ant-popover-open,&:hover {
+      background: @action-hover-color;
+    }
+  }
+}
+
+.header-default {
+  .custom-header-action(rgba(0, 0, 0, 0.45), #6F6E75);
+}
+
+.header-light {
+  background-color: #d9d9d9;
+  .custom-header-action(rgba(0, 0, 0, 0.45), #6F6E75);
+}
+
+.header-green {
+  background-color: #73d13d;
+  .custom-header-action(#389e0d);
+}
+
+.header-blue {
+  background-color: #40a9ff;
+  .custom-header-action(#096dd9);
+}
+
+.header-red {
+  background-color: #ff4d4f;
+  .custom-header-action(#cf1322);
+}
+
+.custom-sidebar(@item-color; @background; @menu-active-color; @item-selected-background) {
+  &.ant-menu-inline {
+    &, & .ant-menu-submenu-inline.ant-menu-submenu {
+      background-color: @background;
+      color: @item-color;
+    }
+    &.ant-menu-dark .ant-menu-inline.ant-menu-sub {
+      background-color: @background;
+      box-shadow: none;
+    }
+    &.ant-menu-dark .ant-menu-item > a {
+      color: @item-color;
+    }
+    .ant-menu-submenu-title:hover {
+      color: @menu-active-color;
+    }
+    .ant-menu-submenu.ant-menu-submenu-inline.ant-menu-submenu-open.ant-menu-submenu-selected,
+    .ant-menu-submenu.ant-menu-submenu-inline.ant-menu-submenu-open {
+      .ant-menu-submenu-title {
+        color: @menu-active-color;
+      }
+    }      
+    .ant-menu-inline .ant-menu-item {
+      color: @item-color;
+      &.ant-menu-item-active {
+        > a {
+          color: @menu-active-color;
+        }
+      }
+      &.ant-menu-item-selected {
+        > a {
+          color: @menu-active-color;
+        }
+        background-color: @item-selected-background;
+      }
+    }
+  }
+  &.ant-layout-sider {
+    .ant-layout-sider-children {
+      background: @background;
+    }
+  }
+} 
+
+.my-sider {
+  &.sider-light {
+    .custom-sidebar(#6F6E75; #d9d9d9; #171729; rgba(0, 0, 0, 0.45));
+    &.ant-menu-dark > .ant-menu-submenu > .ant-menu-submenu-title > .ant-menu-submenu-arrow:after,
+    &.ant-menu-dark > .ant-menu-submenu > .ant-menu-submenu-title > .ant-menu-submenu-arrow:before{
+      background: black;
+    }
+  }
+  &.sider-red {
+    .custom-sidebar(#fff; #f5222d; #171729; #be1212);
+  }
+  &.sider-blue {
+    .custom-sidebar(#fff; #1890ff; #171729; #0088c5);
+  }
+  &.sider-green {
+    .custom-sidebar(#fff; #52c41a; #171729; #52a223);
+  }
+}

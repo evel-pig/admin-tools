@@ -1,0 +1,119 @@
+{
+  "name": "@epig/admin-tools",
+  "version": "0.0.1",
+  "description": "admin project tools",
+  "main": "./lib/app.tsx",
+  "bin": {
+    "epig-admin-tools": "./bin/index.js"
+  },
+  "scripts": {
+    "start": "af dev",
+    "build": "gulp",
+    "prepublish": "npm run build",
+    "test": "jest",
+    "precommit": "lint-staged && npm run tsc",
+    "lint": "tslint -c tslint.json --project ./",
+    "tsc": "rm -rf tslib && tsc"
+  },
+  "lint-staged": {
+    "src/**/*.tsx": [
+      "tslint -c tslint.json",
+      "jest --findRelatedTests"
+    ],
+    "src/**/*.ts": [
+      "tslint -c tslint.json",
+      "jest --findRelatedTests"
+    ]
+  },
+  "files": [
+    "bin",
+    "src",
+    "tools"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evel-pig/admin-tools.git"
+  },
+  "keywords": [
+    "react",
+    "admin",
+    "tools"
+  ],
+  "author": "infeng",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/polyfill": "^7.2.5",
+    "@epig/luna": "^1.0.2",
+    "@types/redux-actions": "^2.2.3",
+    "bluebird": "^3.5.1",
+    "classnames": "^2.2.6",
+    "commander": "^2.12.2",
+    "ejs": "^2.5.7",
+    "history": "^4.7.2",
+    "lodash-decorators": "^6.0.0",
+    "react-document-title": "^2.0.3",
+    "react-drag-listview": "0.0.9",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-viewer": "^2.5.1",
+    "redux-actions": "^2.2.1",
+    "redux-saga": "^0.16.0"
+  },
+  "devDependencies": {
+    "@epig/af-build-dev": "^1.0.8",
+    "@types/jest": "^22.0.0",
+    "@types/node": "^8.5.2",
+    "@types/react": "^16.3.16",
+    "@types/react-dom": "^16.0.6",
+    "@types/redux": "^3.6.0",
+    "antd": "^3.7.0",
+    "babel-jest": "^22.0.4",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "enzyme-to-json": "^3.3.4",
+    "gulp": "^3.9.1",
+    "husky": "^0.14.3",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^22.4.4",
+    "lint-staged": "^7.1.2",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "rimraf": "^2.6.2",
+    "ts-jest": "^22.4.6",
+    "tslint": "^5.10.0",
+    "tslint-eslint-rules": "^5.3.1",
+    "tslint-language-service": "^0.9.9",
+    "tslint-react": "^3.6.0",
+    "typescript": "^3.0.1"
+  },
+  "peerDependencies": {
+    "react": ">=16.3.0",
+    "react-dom": ">=16.3.0",
+    "antd": ">=3.3.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
+      "\\.js$": "<rootDir>/node_modules/babel-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less)$": "identity-obj-proxy"
+    },
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "roots": [
+      "./src"
+    ],
+    "testURL": "http://localhost"
+  }
+}

@@ -1,0 +1,48 @@
+@import '../util/default.less';
+
+.@{prefix-cls}-e-tab {
+  &-tab {
+    min-height: calc(100vh - 70px - 64px);
+  }
+
+  &-header {
+    background-color: white;
+    width: 100%;
+    padding: 12px;
+  }
+  
+  &-content-wrapper {
+    margin: 24px 24px 0px;
+    overflow: hidden;
+  }
+
+  &-content {
+    background-color: white;
+    padding: 24px 32px;
+    overflow: hidden;   
+  }
+  
+  &-content-item-active {
+    opacity: 1;
+    width: 100%;
+  }
+  
+  &-content-item-inactive{
+    opacity: 0;
+    height: 0;
+    pointer-events: none;
+    padding: 0 !important;
+    display: none;
+  }
+  
+  &-tab-operations {
+    button {
+      margin-right: 2px;
+    }
+  }
+
+  &-breadcrumb {
+    display: inline-block;
+    margin-left: 12px;
+  }
+}

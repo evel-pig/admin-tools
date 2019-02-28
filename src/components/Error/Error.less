@@ -1,0 +1,21 @@
+@import '../../util/default.less';
+
+.@{prefix-cls}-error {
+  & {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 80px 0;
+    flex-direction: column;
+  }
+  
+  @text-font-size: 36px;
+  
+  .text {
+    color: #434e59;
+    font-size: @text-font-size;
+    font-weight: 600;
+    line-height: @text-font-size;
+    margin-bottom: 24px;
+  }
+}

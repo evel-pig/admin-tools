@@ -1,0 +1,27 @@
+@import '../../util/default.less';
+
+.@{prefix-cls}-unitable {
+  &-tableList {
+    .tableListOperator {
+      margin: 12px 0;
+      button {
+        margin-right: 8px;
+      }
+    }
+
+    .ant-table-pagination {
+      margin-top: 24px;
+    }
+  }
+
+  &-action-container {
+    & > a {
+      display: inline-block;
+      margin-right: 12px;
+    }
+    & > a:last-child {
+      margin: 0;
+    }
+  }
+}
+

@@ -1,0 +1,121 @@
+@import '~antd/lib/style/themes/default.less';
+@import '../../util/default.less';
+
+.@{prefix-cls}-tab {
+  & {
+    margin-bottom: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  &-extra-content {
+    line-height: 40px;
+  
+    &-left {
+      float: left;
+    }
+  
+    &-right {
+      float: right;
+    }
+  }
+  
+  &-nav-container {
+    padding: 0 32px;
+    height: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  &-nav-wrapper {
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  
+  &-nav {
+    position: relative;
+    margin: 0;
+    list-style: none;
+    display: inline-block;
+    transition: all .3s;
+  }
+  
+  &-item {
+    display: inline-block;
+    position: relative;
+    border: 1px solid #e8e8e8;
+    padding: 0 16px;
+    line-height: 38px;
+    transition: all .3s;
+    cursor: pointer;
+    margin-right: 2px;
+  
+    &.active {
+      background: #fff;
+      border-color: #e8e8e8;
+      color: #1890ff;
+      font-weight: 500;
+    }
+  }
+  
+  &-item-active-bar {
+    position: absolute;
+    background-color: @primary-color;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+  }
+  
+  &-item-close {
+    color: rgba(0, 0, 0, 0.45);
+    transition: all .3s;
+    font-size: 12px;
+    margin-left: 3px;
+    margin-right: -5px;
+    overflow: hidden;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    height: 14px;
+  }
+  
+  &-scroll-icon {
+    position: absolute;
+    z-index: 2;
+    pointer-events: auto;
+    text-align: center;
+    background: transparent;
+    user-select: none;
+    width: 32px;
+    height: 100%;
+    cursor: pointer;
+  
+    i {
+      font-style: normal;
+      font-weight: 700;
+      font-variant: normal;
+      line-height: inherit;
+      vertical-align: baseline;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      text-align: center;
+      text-transform: none;
+    }
+  
+    &-disabled {
+      color: rgba(0,0,0,.25);
+      cursor: not-allowed;
+    }
+  
+    &-right {
+      right: 2px;
+    }
+  
+    &-left {
+      left: 0;
+    }
+  }
+}

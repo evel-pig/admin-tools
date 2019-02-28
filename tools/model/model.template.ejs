@@ -1,0 +1,26 @@
+import { createModel } from '@epig/admin-tools/lib/model';
+
+export interface <%= componentName %>State {
+}
+
+const model = createModel({
+  modelName: '<%= modelName %>',
+  action: {
+    simple: {
+      changeName: 'changeName',
+    },
+  },
+  reducer: ({ simpleActionNames, createReducer }) => {
+    return createReducer<<%= componentName %>State, any>({
+      [simpleActionNames.changeName](state, action) {
+        return {
+          ...state,
+          name: action.payload.name,
+        };
+      },
+    }, {
+    });
+  },
+});
+
+export default model;

@@ -1,0 +1,41 @@
+@import '../../util/default.less';
+
+.@{prefix-cls}-image-upload-ex {
+  &-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  
+  &-desc {
+    margin-right: 36px;
+  }
+  
+  &-image-list {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  &-image-item {
+    position: relative;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+
+    img {
+      width: 100px;
+      height: 100px;
+      border: 1px solid gray;
+    }
+  }
+
+  &-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
