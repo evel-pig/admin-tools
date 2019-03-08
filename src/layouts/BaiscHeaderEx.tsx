@@ -88,7 +88,7 @@ export class BaiscHeaderEx extends BasicComponent<BaiscHeaderExProps, any> {
     );
 
     return (
-      <Header className={headerClass}>
+      <Header className={headerClass} tagName="header">
         <Icon
           className={getClassName('trigger')}
           type={this.props.menu.collapsed ? 'menu-unfold' : 'menu-fold'}
