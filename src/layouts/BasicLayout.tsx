@@ -82,14 +82,13 @@ export class BasicLayout extends LayoutComponent<BasicLayoutProps, any> {
         <LocaleProvider locale={zh_CN} >
           <Layout
             className={getClassName('layout')}
-            tagName="main"
           >
             <BasicSiderMenu app={this.props.app} />
-            <Layout className={getClassName('mainLayout')} tagName="main">
+            <Layout className={getClassName('mainLayout')}>
               <BaiscHeaderEx
                 headerMenuItems={this.props.headerMenuItems}
               />
-              <Content style={contentStyle} tagName="main">
+              <Content style={contentStyle}>
                 <Setting />
                 <ErrorBoundary>
                   <EnhanceTab
