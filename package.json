@@ -1,6 +1,6 @@
 {
   "name": "@epig/admin-tools",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "admin project tools",
   "main": "./lib/app.tsx",
   "bin": {
