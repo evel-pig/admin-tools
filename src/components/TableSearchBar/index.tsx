@@ -11,7 +11,7 @@ import {
   Tag,
   Checkbox,
 } from 'antd';
-import { WrappedFormUtils } from 'antd/lib/form/Form';
+import { FormComponentProps } from 'antd/lib/form/Form';
 import moment, { Moment } from 'moment';
 import { DATE_FORMAT, DATEONLY_FORMAT } from '../../util/constants';
 import { SINPUT_CONFIG, SSINPUT_CONFIG, DATERANGE_CONFIG } from './constanst';
@@ -227,8 +227,7 @@ export interface TableSearchBarOwnProps {
   omitSearchs?: any;
 }
 
-export interface TableSearchBarProps extends TableSearchBarOwnProps {
-  form: WrappedFormUtils;
+export interface TableSearchBarProps extends TableSearchBarOwnProps, FormComponentProps {
 }
 
 interface TableSearchBarState {
@@ -862,7 +861,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 }
 
-export default Form.create<TableSearchBarOwnProps>({
+export default Form.create<TableSearchBarProps>({
   onValuesChange(_, values, allValues) {
     if (_.onChange) {
       _.onChange(allValues);
