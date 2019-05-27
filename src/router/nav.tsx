@@ -7,9 +7,11 @@ import { NavData } from '../router';
 export interface GetNavDataOptions {
   injectLoginConfig?: LoginOwnProps;
   injectBasicLayoutConfig?: BasicLayoutOwnProps;
+  customLogin?: any;
 }
 
 function getNavData(routes, options: Partial<GetNavDataOptions> = {
+  customLogin: null,
   injectLoginConfig: {},
   injectBasicLayoutConfig: {},
 }): NavData[] {
@@ -24,7 +26,7 @@ function getNavData(routes, options: Partial<GetNavDataOptions> = {
           name: '登陆',
           path: '/user/login',
           components: {
-            Login: injectLogin(options.injectLoginConfig),
+            Login: options.customLogin || injectLogin(options.injectLoginConfig),
           },
         },
       ],

@@ -28,6 +28,7 @@ export interface LoginOwnProps {
 interface LoginProps extends LoginOwnProps {
   form: WrappedFormUtils;
   login: LoginState;
+  app: any;
 }
 
 class Login extends BasicComponent<LoginProps, any> {
@@ -82,6 +83,11 @@ class Login extends BasicComponent<LoginProps, any> {
     const { getFieldDecorator } = form;
     return (
       <div className={getClassName()}>
+        <div className={getClassName('top')}>
+          <div className={getClassName('header')}>
+            <span className={getClassName('title')}>{this.props.app.appName}</span>
+          </div>
+        </div>
         <Form onSubmit={this.handleSubmit}>
           <FormItem>
             {getFieldDecorator('userName', {

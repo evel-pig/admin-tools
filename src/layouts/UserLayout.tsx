@@ -13,33 +13,18 @@ export interface UserLayoutProps {
 }
 
 export default class UserLayout extends LayoutComponent<UserLayoutProps, any> {
-  static title = '';
-  static desc = '';
-
   constructor(props) {
     super(props);
 
     this.layoutName = 'UserLayout';
 
     LayoutComponent.appName = this.props.app.appName;
-    UserLayout.title = this.props.app.appName;
   }
 
   render() {
     return (
       <DocumentTitle title={this.getPageTitle()}>
         <div className={getClassName('container')}>
-          <div className={getClassName('top')}>
-            <div className={getClassName('header')}>
-              <img
-                alt=""
-                className={getClassName('logo')}
-              // src="https://gw.alipayobjects.com/zos/rmsportal/NGCCBOENpgTXpBWUIPnI.svg"
-              />
-              <span className={getClassName('title')}>{UserLayout.title}</span>
-            </div>
-            <div className={getClassName('desc')}>{UserLayout.desc}</div>
-          </div>
           {
             this.props.getRouteData(this.layoutName).map(item =>
               (
@@ -54,6 +39,7 @@ export default class UserLayout extends LayoutComponent<UserLayoutProps, any> {
                           component: item.components[Object.keys(item.components)[0]],
                         }}
                         {...props}
+                        app={this.props.app}
                       />
                     );
                   }}
