@@ -19,9 +19,9 @@ export function getPlainNode(nodeList, parentPath = '') {
   return arr;
 }
 
-import createHistory from 'history/createBrowserHistory';
+import * as h from 'history';
 
-export const history = createHistory();
+export const history = h.createBrowserHistory();
 
 /**
  * 格式化Label
