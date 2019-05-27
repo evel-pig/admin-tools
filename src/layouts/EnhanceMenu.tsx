@@ -60,7 +60,7 @@ class EnhanceMenu extends BasicComponent<EnhanceMenuProps, any> {
       <Menu.Item
         key={key}
       >
-        <span><Icon type={icon} /><span>{text}</span></span>
+        <span>{icon && <Icon type={icon} />}<span>{text}</span></span>
       </Menu.Item>
     );
   }
@@ -82,7 +82,7 @@ class EnhanceMenu extends BasicComponent<EnhanceMenuProps, any> {
       return (
         <SubMenu
           key={menu.name}
-          title={<span><Icon type={menu.icon}/><span>{menu.text}</span></span>}
+          title={<span>{menu.icon && <Icon type={menu.icon}/>}<span>{menu.text}</span></span>}
         >
           {menuItems}
         </SubMenu>
