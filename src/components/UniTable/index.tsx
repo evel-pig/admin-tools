@@ -84,6 +84,10 @@ export interface UniTableOwnProps {
   onGetData?: (requestParams: any, fieldsValue: any, pageNo: number, pageSize: number) => void;
   expandedRowRender?: (record: any, index, indent, expanded) => React.ReactNode;
   onExpand?: (expanded, record) => void;
+  /** 自定义展开图标 */
+  expandIcon?: (props) => ReactNode;
+  /** 展开的行 */
+  expandedRowKeys?: string[];
 }
 
 interface UniTableProps extends UniTableOwnProps { }
@@ -289,6 +293,8 @@ class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
             } : null}
             expandedRowRender={this.props.expandedRowRender}
             onExpand={this.props.onExpand}
+            expandIcon={this.props.expandIcon}
+            expandedRowKeys={this.props.expandedRowKeys}
           />,
         )}
       </div>
