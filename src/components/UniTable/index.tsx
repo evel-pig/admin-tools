@@ -117,6 +117,8 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     pageKeyName: {},
     processQueryData: queryData => queryData,
     onExpand: () => {},
+    expandIcon: () => false,
+    expandedRowKeys: [],
   };
 
   tableSearchBar: any;
