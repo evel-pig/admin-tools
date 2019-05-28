@@ -381,7 +381,7 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
             }
             this.props.dispatch(menuModel.actions.simple.cancelModal());
           }}
-          width={modalPaneConfig.width || 1024}
+          width={modalPaneConfig.width}
         >
           {ComponentNode}
         </Modal>
