@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NormalComponentProps } from '@epig/luna/lib/connect';
-import menuModel, { updatePane, UpdatePanePayload, GoTabPayload } from '../../commonModels/menu';
+import menuModel, { updatePane, UpdatePanePayload, GoTabPayload, cancelModal } from '../../commonModels/menu';
 
 export interface BasicComponentProps extends NormalComponentProps {
   token: any;
@@ -26,5 +26,12 @@ export default class BasicComponent<P = any, S = any> extends React.Component<Ba
    */
   go = (options: GoTabPayload) => {
     this.props.dispatch(menuModel.actions.simple.goTab(options));
+  }
+
+  /**
+   * 关闭modal子页面
+   */
+  cancelModal = () => {
+    cancelModal();
   }
 }

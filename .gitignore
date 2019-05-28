@@ -8,3 +8,4 @@ site/dist/*
 site/src/lib/*
 .dfxk-admin-tools
 tslib
+.admin-tools

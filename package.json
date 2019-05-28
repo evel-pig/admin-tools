@@ -43,7 +43,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
-    "@epig/luna": "^1.0.2",
+    "@epig/luna": "^1.2.0",
     "@types/redux-actions": "^2.2.3",
     "bluebird": "^3.5.1",
     "classnames": "^2.2.6",
@@ -60,7 +60,7 @@
     "redux-saga": "^0.16.0"
   },
   "devDependencies": {
-    "@epig/af-build-dev": "^1.0.9",
+    "@epig/af-build-dev": "^1.1.0",
     "@types/jest": "^22.0.0",
     "@types/node": "^8.5.2",
     "@types/react": "^16.3.16",

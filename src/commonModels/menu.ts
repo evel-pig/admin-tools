@@ -43,6 +43,18 @@ interface PaneConfig {
   originComponentName: string;
 }
 
+export interface UpdatePaneModalConfig {
+  title: string;
+  width?: number;
+  onCancel?: () => void;
+}
+
+export interface ModalPaneConfig extends UpdatePaneModalConfig {
+  componentName: string;
+  key: string;
+  options?: any;
+}
+
 export interface MenuState {
   menus: MenuDecorator[];
   activeSubMenu: string[];
@@ -60,6 +72,7 @@ export interface MenuState {
   breadcrumbNames: any[];
   multipleTab: boolean;
   noRequestMenu: boolean;
+  modalPaneConfig: ModalPaneConfig;
 }
 
 const model = createModel({
@@ -90,6 +103,7 @@ const model = createModel({
       setName: 'setName',
       checkPermission: 'checkPermission',
       completeCheckPermission: 'completeCheckPermission',
+      cancelModal: 'cancelModal',
     },
     api: {
       getOperatorInfo: {
@@ -256,29 +270,50 @@ const model = createModel({
       },
       [normalActions.redirect as any](state, action) {
         let { activePath } = state;
+        const mode: UpdatePaneMode = action.payload.mode || 'default';
         let componentName = getComponentName(action.payload.componentName);
         let options = action.payload.options;
+        let modalPaneConfig: ModalPaneConfig = null;
         const paneConfigs = state.paneConfigs.map(item => {
           if (item.key === activePath) {
-            let origin = false;
-            if (item.backComponent) {
-              origin = componentName === item.originComponentName;
+            switch (mode) {
+              case 'default':
+                let origin = false;
+                if (item.backComponent) {
+                  origin = componentName === item.originComponentName;
+                }
+                return {
+                  ...item,
+                  componentName: componentName,
+                  options: options,
+                  backComponent: origin ? null : {
+                    ...item,
+                    ...(action.payload.backComponent || {}),
+                  },
+                };
+              case 'modal':
+                modalPaneConfig = {
+                  componentName: action.payload.componentName,
+                  options: options,
+                  key: item.key,
+                  ...action.payload.modalConfig,
+                };
+              default:
+                return item;
             }
-            return {
-              ...item,
-              componentName: componentName,
-              options: options,
-              backComponent: origin ? null : {
-                ...item,
-                ...(action.payload.backComponent || {}),
-              },
-            };
           }
           return item;
         });
         return {
           ...state,
           paneConfigs,
+          modalPaneConfig,
+        };
+      },
+      [simpleActionNames.cancelModal](state, action) {
+        return {
+          ...state,
+          modalPaneConfig: null,
         };
       },
       [simpleActionNames.afterGoTab](state, action) {
@@ -423,6 +458,7 @@ const model = createModel({
       breadcrumbNames: [],
       multipleTab: true,
       noRequestMenu: false,
+      modalPaneConfig: null,
     });
   },
   sagas: ({ actionNames, actions }) => {
@@ -459,9 +495,13 @@ const model = createModel({
   },
 });
 
+export type UpdatePaneMode = 'default' | 'modal';
+
 export interface UpdatePanePayload {
   componentName: string;
   backComponent?: Partial<BackComponentDecorator>;
+  mode?: UpdatePaneMode;
+  modalConfig?: UpdatePaneModalConfig;
 }
 
 export function updatePane(dispatch, payload: UpdatePanePayload, options = null) {
@@ -469,6 +509,12 @@ export function updatePane(dispatch, payload: UpdatePanePayload, options = null)
     ...payload,
     options,
   }));
+}
+
+export function cancelModal() {
+  if (window['store']) {
+    window['store'].dispatch(model.actions.simple.cancelModal());
+  }
 }
 
 export default model;

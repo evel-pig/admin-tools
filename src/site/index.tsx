@@ -4,7 +4,7 @@ const processResponse = res => res.data;
 
 const app = new App({
   appName: 'epig-test-admin-app',
-  routes: () => [],
+  routes: () => require('../.admin-tools/router'),
   noRequestMenu: true,
   customMenus: () => [
     {
@@ -17,7 +17,7 @@ const app = new App({
         text: '账号管理',
         name: 'account',
         leaf: true,
-        permissionId: 4,
+        permissionId: -1,
       }],
     },
   ],

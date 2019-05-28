@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import classnames from 'classnames';
 import * as React from 'react';
 import menuModel, { BackComponentDecorator, MenuState, MenuDecorator } from '../commonModels/menu';
@@ -360,10 +360,41 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
     }
   }
 
+  renderModalPane = () => {
+    const { modalPaneConfig } = this.props.data;
+
+    if (this.props.data.modalPaneConfig) {
+      let ComponentNode = this.getComponent(
+        modalPaneConfig.key,
+        modalPaneConfig.componentName,
+        modalPaneConfig.options,
+      );
+
+      return (
+        <Modal
+          visible
+          title={modalPaneConfig.title}
+          footer={[]}
+          onCancel={() => {
+            if (modalPaneConfig.onCancel) {
+              modalPaneConfig.onCancel();
+            }
+            this.props.dispatch(menuModel.actions.simple.cancelModal());
+          }}
+          width={modalPaneConfig.width || 1024}
+        >
+          {ComponentNode}
+        </Modal>
+      );
+    }
+    return null;
+  }
+
   render() {
     return (
       <div style={this.props.style} className={getClassName('tab')}>
         {this.renderTabPanes()}
+        {this.renderModalPane()}
       </div>
     );
   }
