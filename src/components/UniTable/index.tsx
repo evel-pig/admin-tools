@@ -97,7 +97,9 @@ interface MyState {
   selectedRows: any[];
 }
 
-class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
+export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
+  static pageNoKeyName = 'pageNo';
+  static pageSizeKeyName = 'pageSize';
   static defaultProps = {
     firstLoadData: true,
     basicSearch: false,
@@ -112,10 +114,7 @@ class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
         ...queryData,
       };
     },
-    pageKeyName: {
-      pageNo: 'pageNo',
-      pageSize: 'pageSize',
-    },
+    pageKeyName: {},
     processQueryData: queryData => queryData,
     onExpand: () => {},
   };
@@ -183,8 +182,8 @@ class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     if (this.props.pagination !== false) {
       params = {
         ...params,
-        [this.props.pageKeyName.pageNo]: pageNo || tableState.pagination.current,
-        [this.props.pageKeyName.pageSize]: pageSize || tableState.pagination.pageSize,
+        [this.props.pageKeyName.pageNo || UniTable.pageNoKeyName]: pageNo || tableState.pagination.current,
+        [this.props.pageKeyName.pageSize || UniTable.pageSizeKeyName]: pageSize || tableState.pagination.pageSize,
       };
     }
     if (fieldsValue) {
