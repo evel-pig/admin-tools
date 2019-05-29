@@ -3,7 +3,7 @@ import { createModel } from '@epig/admin-tools/lib/model';
 export interface <%= componentName %>State {
 }
 
-const model = createModel({
+const <%= modelName %>Model = createModel({
   modelName: '<%= modelName %>',
   action: {
     simple: {
@@ -23,4 +23,4 @@ const model = createModel({
   },
 });
 
-export default model;
+export default <%= modelName %>Model;
