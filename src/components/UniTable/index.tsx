@@ -4,7 +4,7 @@ import {
   Table,
 } from 'antd';
 import { ButtonType } from 'antd/lib/button/button';
-import { ColumnProps as TableColumnConfig } from 'antd/lib/table';
+import { ColumnProps as TableColumnConfig, TableProps } from 'antd/lib/table';
 import TableSearchBar, {
   BasicSearchType,
   BasicSearchDecorator,
@@ -100,6 +100,7 @@ interface MyState {
 export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   static pageNoKeyName = 'pageNo';
   static pageSizeKeyName = 'pageSize';
+  static globalTableProps: Partial<TableProps<any>> = {};
   static defaultProps = {
     firstLoadData: true,
     basicSearch: false,
@@ -281,6 +282,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
         {this.props.tableHeader}
         {this.renderTable(
           <Table
+            {...UniTable.globalTableProps}
             columns={columns}
             rowKey={(record, index) => index.toString()}
             dataSource={tableState.infos}
