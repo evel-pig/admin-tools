@@ -12,7 +12,8 @@
     "allowSyntheticDefaultImports": true,
     "plugins": [{ "name": "tslint-language-service" }],
     "skipLibCheck": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "module": "esnext"
   },
   "exclude": [
     "node_modules",

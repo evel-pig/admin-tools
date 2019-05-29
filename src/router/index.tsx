@@ -78,7 +78,7 @@ export interface NavDataItem {
   name?: string;
   path: string;
   components: any;
-  models?: any[];
+  models?: any;
 }
 
 export interface NavData {

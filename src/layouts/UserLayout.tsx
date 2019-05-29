@@ -33,10 +33,12 @@ export default class UserLayout extends LayoutComponent<UserLayoutProps, any> {
                   key={item.path}
                   path={item.path}
                   component={props => {
+                    const key = Object.keys(item.components)[0];
                     return (
                       <DynamicComponent
                         model={{
-                          component: item.components[Object.keys(item.components)[0]],
+                          component: item.components[key],
+                          models: ((item.models || {})[key] || []).concat([require('../commonModels/token')]),
                         }}
                         {...props}
                         app={this.props.app}
