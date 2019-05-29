@@ -5,7 +5,7 @@ import './app.less';
 import router, { NavData } from './router';
 import { message as antdMessage, Spin } from 'antd';
 import { history, adminNormalActions } from './util/util';
-import menuModel, { MenuDecorator } from './commonModels/menu';
+import menuModel, { MenuDecorator, MenuState } from './commonModels/menu';
 import React from 'react';
 import TTApp, { AppOptions, AppPersistConfig, StoreConfig } from '@epig/luna';
 import { createTransform } from '@epig/luna/lib/persist';
@@ -67,6 +67,17 @@ export const requestErrorMiddleware = message => store => next => action => {
   }
 
   return result;
+};
+
+const closeModalPaneMiddleware = store => next => action => {
+  const menu = store.getState().menu as MenuState;
+  if (menu.modalPaneConfig) {
+    if ((menu.modalPaneConfig.cancelActionNames.indexOf(action.type) >= 0)) {
+      store.dispatch(menuModel.actions.simple.cancelModal({}));
+    }
+  }
+
+  return next(action);
 };
 
 export function defaultAdminRequestErrorHandle(res) {
@@ -209,7 +220,9 @@ export default class TTAdminApp {
     let storeOptions = options.store || {};
     storeOptions = {
       ...storeOptions,
-      middlewares: storeOptions.middlewares || [],
+      middlewares: [
+        closeModalPaneMiddleware,
+      ].concat(storeOptions.middlewares || []),
     };
     if (!storeOptions.noAddToken) {
       const tokenKeys = storeOptions.tokenKeys || ['token', 'operatorId'];

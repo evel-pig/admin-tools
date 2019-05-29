@@ -47,6 +47,10 @@ export interface UpdatePaneModalConfig {
   title: string;
   width?: number;
   onCancel?: () => void;
+  /**
+   * 触发这些action的时候关闭Modal
+   */
+  cancelActionNames?: any[];
 }
 
 export interface ModalPaneConfig extends UpdatePaneModalConfig {
