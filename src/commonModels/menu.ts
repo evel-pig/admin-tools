@@ -517,4 +517,8 @@ export function cancelModal() {
   }
 }
 
+export function* cancelModalSaga() {
+  yield put(model.actions.simple.cancelModal());
+}
+
 export default model;
