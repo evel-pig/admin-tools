@@ -72,7 +72,7 @@ export const requestErrorMiddleware = message => store => next => action => {
 const closeModalPaneMiddleware = store => next => action => {
   const menu = store.getState().menu as MenuState;
   if (menu.modalPaneConfig) {
-    if ((menu.modalPaneConfig.cancelActionNames.indexOf(action.type) >= 0)) {
+    if ((menu.modalPaneConfig.cancelActionNames || []).indexOf(action.type) >= 0) {
       store.dispatch(menuModel.actions.simple.cancelModal({}));
     }
   }
