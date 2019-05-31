@@ -130,6 +130,8 @@ export interface BaseSelectDecorator extends CommonSearchPropsDecorator {
   mode?: 'multiple' | 'tags' | 'combobox';
   disabled?: boolean;
   onChange?: (value: any, options: any) => void;
+  changeFieldName?: string;
+  changeFieldValue?: number | string;
 }
 
 export interface BaseInputDecorator {
@@ -538,7 +540,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
             style={{ minWidth: '150px' }}
             disabled={props.disabled}
             className={props.className}
-            onChange={(v, options) => { if (props.onChange) { props.onChange(v, options); } }}
+            onChange={(v, options) => {
+              if (props.onChange) { props.onChange(v, options); }
+              if (props.changeFieldName) {
+                this.changeFieldNameValue(props.changeFieldName, props.changeFieldValue || undefined);
+              }
+            }}
           >
             {props.options.map((item, index) => (
               <Option key={index} value={item.value !== undefined ? item.value : item.id}>
@@ -549,6 +556,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
         )}
       </FormItem>
     );
+  }
+
+  changeFieldNameValue = (fieldsName, value) => {
+    this.props.form.setFieldsValue({
+      [fieldsName]: value,
+    });
   }
 
   renderOptGroupSelect = (config) => {
