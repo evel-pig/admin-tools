@@ -33,6 +33,7 @@ export interface ToolbarButtonDecorator {
   disabled?: boolean;
   text: string;
   enableForAll?: boolean;
+  hide?: boolean;
 }
 
 export interface PageKeyName {
@@ -207,6 +208,9 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     const { toolbarButtons } = this.props;
     return toolbarButtons.map((item, index) => {
       const enableForAll = typeof item.enableForAll === 'undefined' ? true : item.enableForAll;
+      if (item.hide) {
+        return null;
+      }
       return (
         <Button
           key={item.key}
