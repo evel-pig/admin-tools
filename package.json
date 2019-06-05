@@ -3,9 +3,6 @@
   "version": "1.7.0",
   "description": "admin project tools",
   "main": "./lib/app.tsx",
-  "bin": {
-    "epig-admin-tools": "./bin/index.js"
-  },
   "scripts": {
     "start": "epig dev",
     "build": "gulp",
