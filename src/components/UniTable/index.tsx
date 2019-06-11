@@ -43,11 +43,11 @@ export interface PageKeyName {
 
 export interface UniTableOwnProps {
   /** 请求列表的apiAction */
-  apiAction: any;
+  apiAction?: any;
   /** 行定义 */
   columns: TableColumnConfig<any>[];
   /** 表格相关数据 */
-  tableState: ListState<any>;
+  tableState?: ListState<any>;
   /** 基础搜索 */
   basicSearchs?: BasicSearchType[] | BasicSearchDecorator[];
   /** 高级搜索 */
@@ -69,7 +69,9 @@ export interface UniTableOwnProps {
   onDragEnd?: (fromIndex: number, toIndex: number) => void;
   /** 拖拽handleSelector */
   handleSelector?: string;
+  /** 处理进来的查询参数 */
   transformQueryDataIn?: (queryData: any) => any;
+  /** 处理出去的查询数据 */
   transformQueryDataOut?: (queryData: any) => any;
   pageKeyName?: PageKeyName;
   /** fieldsValue改变的回调 */
@@ -143,7 +145,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
       }
       this.getTableList({
         ...defaultValues,
-        ...this.props.transformQueryDataIn(this.props.tableState.fieldsValue),
+        ...this.props.transformQueryDataIn(this.props.tableState ? this.props.tableState.fieldsValue : {}),
       });
     }
   }
@@ -177,8 +179,11 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   }
 
   getTableList(fieldsValue?: any, pageNo?: number, pageSize?: number) {
-    fieldsValue = this.props.transformQueryDataOut(fieldsValue);
     const { tableState, dispatch, apiAction, otherParams } = this.props;
+    if (!apiAction) {
+      return;
+    }
+    fieldsValue = this.props.transformQueryDataOut(fieldsValue);
     let params = {
       except: { fieldsValue: fieldsValue },
       ...otherParams,
@@ -241,7 +246,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
           onChange={this.handleChange}
           advanceSearchs={advanceSearchs}
           basicSearchs={basicSearchs}
-          fieldsValue={this.props.transformQueryDataIn(tableState.fieldsValue)}
+          fieldsValue={this.props.transformQueryDataIn(tableState ? tableState.fieldsValue || {} : {})}
           wrappedComponentRef={(form) => this.tableSearchBar = form}
           omitSearchs={omitSearchs}
         />
@@ -274,7 +279,13 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   }
 
   render() {
-    const { tableState, columns, toolbarButtons, renderOtherSearchs,  pagination } = this.props;
+    const { tableState: t, columns, toolbarButtons, renderOtherSearchs,  pagination } = this.props;
+    const tableState = t || {
+      infos: [],
+      pagination: null,
+      loading: false,
+      fieldsValue: {},
+    };
     let _pagination = (pagination && tableState.infos.length > 0) ? tableState.pagination : false;
     return (
       <div className={getClassName('tableList')}>
