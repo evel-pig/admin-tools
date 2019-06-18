@@ -91,6 +91,8 @@ export interface UniTableOwnProps {
   expandIcon?: (props) => ReactNode;
   /** 展开的行 */
   expandedRowKeys?: string[];
+  /** 自定义渲染(嵌套)table */
+  customRenderTable?: (table: any) => React.ReactNode;
 }
 
 interface UniTableProps extends UniTableOwnProps { }
@@ -120,7 +122,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     },
     pageKeyName: {},
     processQueryData: queryData => queryData,
-    onExpand: () => {},
+    onExpand: () => { },
     expandIcon: () => false,
     expandedRowKeys: [],
   };
@@ -273,13 +275,15 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
           {table}
         </ReactDragListView>
       );
+    } else if (this.props.customRenderTable) {
+      return this.props.customRenderTable(table);
     } else {
       return table;
     }
   }
 
   render() {
-    const { tableState: t, columns, toolbarButtons, renderOtherSearchs,  pagination } = this.props;
+    const { tableState: t, columns, toolbarButtons, renderOtherSearchs, pagination } = this.props;
     const tableState = t || {
       infos: [],
       pagination: null,
