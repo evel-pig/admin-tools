@@ -40,7 +40,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
-    "@epig/luna": "^1.4.0",
+    "@epig/luna": "^1.5.1",
     "@types/redux-actions": "^2.2.3",
     "bluebird": "^3.5.1",
     "classnames": "^2.2.6",

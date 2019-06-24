@@ -10,7 +10,7 @@ import React from 'react';
 import TTApp, { AppOptions, AppPersistConfig, StoreConfig } from '@epig/luna';
 import { createTransform } from '@epig/luna/lib/persist';
 import DefaultLoadingComponent from './components/DefaultLoadingComponent';
-import DynamicComponent from './components/DynamicComponent';
+import { setDefaultLoadingComponent } from './components/DynamicComponent';
 import { ApiBasePath } from '@epig/luna/lib/model/initApi';
 
 const apiReg = {
@@ -288,7 +288,7 @@ export default class TTAdminApp {
     this.noRequestMenu = options.noRequestMenu;
     this.checkPermission = options.checkPermission;
 
-    DynamicComponent.setDefaultLoadingComponent(() => options.DynamicDefaultLoadingComponent );
+    setDefaultLoadingComponent(() => options.DynamicDefaultLoadingComponent );
   }
 
   setRouter() {
