@@ -4,7 +4,7 @@ const processResponse = res => res.data;
 
 const app = new App({
   appName: 'epig-test-admin-app',
-  routes: () => [],
+  routes: () => require('../.admin-tools/router'),
   noRequestMenu: true,
   customMenus: () => [
     {

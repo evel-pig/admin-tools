@@ -476,7 +476,7 @@ const model = createModel({
         }));
       }
     }
-    function* goTab() {
+    function* handleGoTab() {
       while (true) {
         const { payload } = yield take(actionNames.simple.goTab);
         history.push(payload.path);
@@ -494,7 +494,7 @@ const model = createModel({
 
     return [
       refreshTabPane,
-      goTab,
+      handleGoTab,
     ];
   },
 });
@@ -508,11 +508,15 @@ export interface UpdatePanePayload {
   modalConfig?: UpdatePaneModalConfig;
 }
 
-export function updatePane(dispatch, payload: UpdatePanePayload, options = null) {
-  dispatch(normalActions.redirect({
+export function updatePane(payload: UpdatePanePayload, options = null) {
+  window['store'].dispatch(normalActions.redirect({
     ...payload,
     options,
   }));
+}
+
+export function goTab(options: GoTabPayload) {
+  window['store'].dispatch(model.actions.simple.goTab(options));
 }
 
 export function cancelModal() {
