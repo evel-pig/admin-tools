@@ -147,6 +147,7 @@ export interface DateRangeDecorator extends CommonSearchPropsDecorator {
   format?: string;
   dateSelects: DateSelect[] | true;
   allowClear?: boolean;
+  timeZone?: BaseSelectDecorator | boolean;
 }
 
 export interface SelectInputDecorator {
@@ -380,6 +381,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
             delete _fieldsValue[fieldName];
           }
         }
+        if (props.timeZone) {
+          let fieldName = typeof props.timeZone === 'object' ? props.timeZone.fieldName : 'timeZone';
+          if (!_fieldsValue[fieldName]) {
+            delete _fieldsValue[fieldName];
+          }
+        }
       }
       if (item.type === 'DatePicker') {
         const props = item.props as DatePickerDecorator;
@@ -427,7 +434,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
 
   getDefaultValue() {
     let advanceSearchs = this.state.advanceSearchs;
-    if (advanceSearchs.length > 2 && this.props.omitSearchs  && !this.state.expandForm) {
+    if (advanceSearchs.length > 2 && this.props.omitSearchs && !this.state.expandForm) {
       advanceSearchs = advanceSearchs.slice(0, 2);
     }
     let fieldsValue = {};
@@ -452,6 +459,13 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           const initialValue = props.initialValue || [null, null];
           fieldsValue[props.fieldsName[0]] = initialValue[0];
           fieldsValue[props.fieldsName[1]] = initialValue[1];
+          if (props.timeZone) {
+            if (typeof props.timeZone === 'object' && props.timeZone.fieldName) {
+              fieldsValue[props.timeZone.fieldName] = props.timeZone.initialValue || 1;
+            } else {
+              fieldsValue['timeZone'] = 1;
+            }
+          }
           break;
         case 'Input':
           fieldsValue[props.fieldName] = props.initialValue;
@@ -581,15 +595,15 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
             disabled={props.disabled}
           >
             {props.options.map((items, index) => (
-               <OptGroup label={`${items.name}`} key={index}>
-                  {
-                    items && items[props.subFieldName] && items[props.subFieldName].map((item, idx) => (
-                      <Option key={index + idx} value={item.value !== undefined ? item.value : item.id}>
-                        {item.text || item.name}
-                      </Option>
-                    ))
-                  }
-               </OptGroup>
+              <OptGroup label={`${items.name}`} key={index}>
+                {
+                  items && items[props.subFieldName] && items[props.subFieldName].map((item, idx) => (
+                    <Option key={index + idx} value={item.value !== undefined ? item.value : item.id}>
+                      {item.text || item.name}
+                    </Option>
+                  ))
+                }
+              </OptGroup>
             ))}
           </Select>,
         )}
@@ -660,13 +674,13 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
       <div className={className('tag-list')}>
         {datasource.map(item => {
           return (
-          <Tag
-            key={item.value}
-            color={item.color}
-            onClick={() => { this.handleTagClick(item, config); }}
-          >
-            {item.text}
-          </Tag>);
+            <Tag
+              key={item.value}
+              color={item.color}
+              onClick={() => { this.handleTagClick(item, config); }}
+            >
+              {item.text}
+            </Tag>);
         })}
       </div>
     );
@@ -680,8 +694,25 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     const fotmat = props.format || DATE_FORMAT;
     const dateSelects = props.dateSelects ? props.dateSelects === true ? defaultDateSelects : props.dateSelects : false;
     return (
-      <FormItem key={props.fieldsName[0]}>
-        <FormItem label={label} style={{ marginRight: 0 }}>
+      <FormItem key={props.fieldsName[0]} label={label}>
+        {props.timeZone && props.timeZone ?
+          this.renderSelect({
+            type: 'Select',
+            label: '',
+            props: {
+              fieldName: 'timeZone',
+              initialValue: 1,
+              options: [{
+                value: 1,
+                text: '美东时间',
+              }, {
+                value: 2,
+                text: '北京时间',
+              }],
+              ...(typeof props.timeZone === 'object' ? props.timeZone : {}),
+            } as BaseSelectDecorator,
+          }) : null}
+        <FormItem style={{ marginRight: 0 }}>
           {getFieldDecorator(props.fieldsName[0], {
             initialValue: this.getInitialValue(type, props.fieldsName[0], initialValue[0]),
           })(
@@ -694,15 +725,15 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
         </FormItem>
         <span> - </span>
         <FormItem style={{ marginRight: 0 }}>
-            {getFieldDecorator(props.fieldsName[1], {
-              initialValue: this.getInitialValue(type, props.fieldsName[1], initialValue[1]),
-            })(
-              <DatePicker
-                format={fotmat}
-                showTime={{ defaultValue: moment(DEFAULT_ENDTIME, 'HH:mm:ss') }}
-                allowClear={props.allowClear}
-              />,
-            )}
+          {getFieldDecorator(props.fieldsName[1], {
+            initialValue: this.getInitialValue(type, props.fieldsName[1], initialValue[1]),
+          })(
+            <DatePicker
+              format={fotmat}
+              showTime={{ defaultValue: moment(DEFAULT_ENDTIME, 'HH:mm:ss') }}
+              allowClear={props.allowClear}
+            />,
+          )}
         </FormItem>
         {dateSelects && this.renderTags(dateSelects, props)}
       </FormItem>
@@ -767,16 +798,16 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           {getFieldDecorator(props.fieldsName[0], {
             initialValue: this.getInitialValue(type, props.fieldsName[0], initialValue[0]),
           })(
-            <InputNumber style={{ width: 100, textAlign: 'center' }} placeholder="最小值" disabled={props.disabled}/>,
+            <InputNumber style={{ width: 100, textAlign: 'center' }} placeholder="最小值" disabled={props.disabled} />,
           )}
         </FormItem>
         <span> - </span>
         <FormItem style={{ marginRight: 0 }}>
-            {getFieldDecorator(props.fieldsName[1], {
-              initialValue: this.getInitialValue(type, props.fieldsName[1], initialValue[1]),
-            })(
-              <InputNumber style={{ width: 100, textAlign: 'center' }} placeholder="最大值" disabled={props.disabled}/>,
-            )}
+          {getFieldDecorator(props.fieldsName[1], {
+            initialValue: this.getInitialValue(type, props.fieldsName[1], initialValue[1]),
+          })(
+            <InputNumber style={{ width: 100, textAlign: 'center' }} placeholder="最大值" disabled={props.disabled} />,
+          )}
         </FormItem>
       </FormItem>
     );
