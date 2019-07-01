@@ -93,6 +93,8 @@ export interface UniTableOwnProps {
   expandedRowKeys?: string[];
   /** 自定义渲染(嵌套)table */
   customRenderTable?: (table: any) => React.ReactNode;
+  /** table footer */
+  footer?: (currentPageData: Object[]) => React.ReactNode;
 }
 
 interface UniTableProps extends UniTableOwnProps { }
@@ -317,6 +319,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
             onExpand={this.props.onExpand}
             expandIcon={this.props.expandIcon}
             expandedRowKeys={this.props.expandedRowKeys}
+            footer={this.props.footer}
           />,
         )}
       </div>
