@@ -167,7 +167,7 @@ export interface RadioDecorator {
   initialValue?: any;
   options: string[] | Array<{
     label: string;
-    value: string;
+    value: any;
     disabled?: boolean
   }>;
 }
