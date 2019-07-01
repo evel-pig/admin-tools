@@ -18,7 +18,7 @@ export default class BasicComponent<P = any, S = any> extends React.Component<Ba
    * 跳转子页面
    */
   push = (payload: UpdatePanePayload, options) => {
-    updatePane(this.props.dispatch, payload, options);
+    updatePane(payload, options);
   }
 
   /**

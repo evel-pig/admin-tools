@@ -4,9 +4,9 @@ const config = {
   },
   disableCSSModules: true,
   plugins: [
-    // ['epig-plugin-admin', {
-    //   noAutoEntry: true,
-    // }],
+    ['epig-plugin-admin', {
+      noAutoEntry: true,
+    }],
   ],
 };
 
