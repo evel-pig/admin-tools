@@ -11,7 +11,7 @@ import {
   Tag,
   Checkbox,
 } from 'antd';
-import { FormComponentProps } from 'antd/lib/form/Form';
+import { FormComponentProps, WrappedFormUtils } from 'antd/lib/form/Form';
 import moment, { Moment } from 'moment';
 import { DATE_FORMAT, DATEONLY_FORMAT } from '../../util/constants';
 import { SINPUT_CONFIG, SSINPUT_CONFIG, DATERANGE_CONFIG } from './constanst';
@@ -212,11 +212,12 @@ export interface BasicSearchDecorator {
 export type AdvanceSearchType = 'Select' | 'SelectInput' | 'DateRange' | 'Input' | 'InputNumber'
   | 'Radio' | 'DatePicker' | 'NumberInterval' | 'OptGroupSelect' | 'Checkbox';
 export interface AdvanceSearchDecorator {
-  type: AdvanceSearchType;
-  label: string;
+  type: AdvanceSearchType | 'custom';
+  label?: string;
   // tslint:disable-next-line:max-line-length
-  props: BaseSelectDecorator | SelectInputDecorator | DateRangeDecorator | InputDecorator | InputNumberDecorator | RadioDecorator |
+  props?: BaseSelectDecorator | SelectInputDecorator | DateRangeDecorator | InputDecorator | InputNumberDecorator | RadioDecorator |
   DatePickerDecorator | NumberIntervalDecorator | OptGroupSelectDecorator | CheckboxDecorator;
+  customRender?: (form?: WrappedFormUtils) => React.ReactNode;
 }
 
 export interface TableSearchBarOwnProps {
@@ -849,6 +850,9 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           break;
         case 'Checkbox':
           _Component = this.renderCheckbox(config);
+          break;
+        case 'custom':
+          _Component = config.customRender && config.customRender(this.props.form);
           break;
         default:
           _Component = <div />;
