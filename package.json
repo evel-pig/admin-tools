@@ -1,6 +1,6 @@
 {
   "name": "@epig/admin-tools",
-  "version": "1.9.0",
+  "version": "1.10.2",
   "description": "admin project tools",
   "main": "./lib/app.tsx",
   "scripts": {
@@ -41,6 +41,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "@epig/luna": "^1.5.2",
+    "@types/react-redux": "^7.1.1",
     "@types/redux-actions": "^2.2.3",
     "bluebird": "^3.5.1",
     "classnames": "^2.2.6",

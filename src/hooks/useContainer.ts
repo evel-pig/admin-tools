@@ -1,7 +1,9 @@
 import { UpdatePanePayload, updatePane, GoTabPayload
 , cancelModal as cancelModalCore, goTab} from '../commonModels/menu';
+import { useDispatch } from 'react-redux';
 
 export default function useContainer() {
+  const dispatch = useDispatch();
   /**
    * 跳转子页面
    */
@@ -27,5 +29,6 @@ export default function useContainer() {
     push,
     go,
     cancelModal,
+    dispatch,
   };
 }
