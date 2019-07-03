@@ -1,10 +1,11 @@
 import { getComponentName, history } from '../util/util';
 import { delay } from 'redux-saga';
-import { take, put } from 'redux-saga/effects';
+import { take, put, select } from 'redux-saga/effects';
 import loginModel from './login';
 import { adminNormalActions } from '../util/util';
 import normalActions from '@epig/luna/lib/model/normalActions';
 import { createModel } from '../model';
+import { refreshUniTable } from '../event/handler';
 
 export interface GoTabPayload {
   path: string;
@@ -48,9 +49,14 @@ export interface UpdatePaneModalConfig {
   width?: number;
   onCancel?: () => void;
   /**
-   * 触发这些action的时候关闭Modal
+   * 触发这些action的时候关闭Modal，默认会自动刷新父组件的UniTable
    */
   cancelActionNames?: any[];
+  /**
+   * 触发cancelActionNames关闭modal的时候不刷新UniTable
+   */
+  disableRefresh?: boolean;
+  refreshUniTableId?: any;
 }
 
 export interface ModalPaneConfig extends UpdatePaneModalConfig {
@@ -108,6 +114,7 @@ const model = createModel({
       checkPermission: 'checkPermission',
       completeCheckPermission: 'completeCheckPermission',
       cancelModal: 'cancelModal',
+      startCancelModal: 'startCancelModal',
     },
     api: {
       getOperatorInfo: {
@@ -314,7 +321,7 @@ const model = createModel({
           modalPaneConfig,
         };
       },
-      [simpleActionNames.cancelModal](state, action) {
+      [simpleActionNames.startCancelModal](state, action) {
         return {
           ...state,
           modalPaneConfig: null,
@@ -491,10 +498,21 @@ const model = createModel({
         }
       }
     }
+    function* handleCancelModal() {
+      while (true) {
+        yield take(actionNames.simple.cancelModal);
+        const state: MenuState = yield select<any>(s => s.menu);
+        if (state.modalPaneConfig && !state.modalPaneConfig.disableRefresh) {
+          refreshUniTable(state.modalPaneConfig.refreshUniTableId);
+        }
+        yield put(actions.simple.startCancelModal({}));
+      }
+    }
 
     return [
       refreshTabPane,
       handleGoTab,
+      handleCancelModal,
     ];
   },
 });

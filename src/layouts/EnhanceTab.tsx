@@ -379,7 +379,7 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
             if (modalPaneConfig.onCancel) {
               modalPaneConfig.onCancel();
             }
-            this.props.dispatch(menuModel.actions.simple.cancelModal());
+            this.props.dispatch(menuModel.actions.simple.startCancelModal());
           }}
           width={modalPaneConfig.width}
         >

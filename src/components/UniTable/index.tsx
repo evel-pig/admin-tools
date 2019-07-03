@@ -16,6 +16,7 @@ import './index.less';
 import { createGetClassName } from '../../util/util';
 import ReactDragListView from 'react-drag-listview';
 import BasicComponent from '../BasicComponent';
+import adminEvent from '../../event';
 
 const getClassName = createGetClassName('unitable');
 
@@ -95,6 +96,14 @@ export interface UniTableOwnProps {
   customRenderTable?: (table: any) => React.ReactNode;
   /** table footer */
   footer?: (currentPageData: Object[]) => React.ReactNode;
+  /**
+   * 关闭modal子页面时，UniTable不刷新
+   */
+  disableRefreshWhenCloseModal?: boolean;
+  /**
+   * 唯一标示，配合UniTable自动刷新使用
+   */
+  id?: string;
 }
 
 interface UniTableProps extends UniTableOwnProps { }
@@ -131,6 +140,8 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
 
   tableSearchBar: any;
 
+  unsubscribeRefreshUniTable = null;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -151,6 +162,21 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
         ...defaultValues,
         ...this.props.transformQueryDataIn(this.props.tableState ? this.props.tableState.fieldsValue : {}),
       });
+    }
+    this.unsubscribeRefreshUniTable = adminEvent.on('refreshUniTable', ({ id }) => {
+      if (this.props.disableRefreshWhenCloseModal) {
+        return;
+      }
+      if (id && id !== this.props.id) {
+        return;
+      }
+      this.tableSearchBar.handleSearch();
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribeRefreshUniTable) {
+      this.unsubscribeRefreshUniTable();
     }
   }
 

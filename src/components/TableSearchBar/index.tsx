@@ -346,7 +346,9 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   handleSearch = e => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) {
