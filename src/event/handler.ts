@@ -1,8 +1,8 @@
 import adminEvent from '.';
 
-export function refreshUniTable(id?: string) {
+export function refreshUniTable(refreshAction: any) {
   adminEvent.send({
     type: 'refreshUniTable',
-    id: id,
+    refreshAction: refreshAction,
   });
 }

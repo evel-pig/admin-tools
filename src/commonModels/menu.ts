@@ -53,10 +53,9 @@ export interface UpdatePaneModalConfig {
    */
   cancelActionNames?: any[];
   /**
-   * 触发cancelActionNames关闭modal的时候不刷新UniTable
+   * 需要刷新的Unitable action
    */
-  disableRefresh?: boolean;
-  refreshUniTableId?: any;
+  refreshUniTableAction?: any;
 }
 
 export interface ModalPaneConfig extends UpdatePaneModalConfig {
@@ -502,8 +501,8 @@ const model = createModel({
       while (true) {
         yield take(actionNames.simple.cancelModal);
         const state: MenuState = yield select<any>(s => s.menu);
-        if (state.modalPaneConfig && !state.modalPaneConfig.disableRefresh) {
-          refreshUniTable(state.modalPaneConfig.refreshUniTableId);
+        if (state.modalPaneConfig && state.modalPaneConfig.refreshUniTableAction) {
+          refreshUniTable(state.modalPaneConfig.refreshUniTableAction);
         }
         yield put(actions.simple.startCancelModal({}));
       }
