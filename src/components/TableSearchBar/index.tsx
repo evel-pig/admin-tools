@@ -10,6 +10,7 @@ import {
   Radio,
   Tag,
   Checkbox,
+  Switch,
 } from 'antd';
 import { FormComponentProps, WrappedFormUtils } from 'antd/lib/form/Form';
 import moment, { Moment } from 'moment';
@@ -19,6 +20,7 @@ import './index.less';
 import { createGetClassName } from '../../util/util';
 import { CheckboxGroupProps } from 'antd/lib/checkbox';
 import { SelectProps } from 'antd/lib/select';
+import { SwitchProps } from 'antd/lib/switch';
 
 const className = createGetClassName('table-search-bar');
 
@@ -203,6 +205,12 @@ export interface OptGroupSelectDecorator extends BaseSelectDecorator {
   subFieldName?: string;
 }
 
+export interface SwitchDecorator {
+  fieldName: string;
+  initialValue: boolean;
+  antdSwitchProps?: Partial<SwitchProps>;
+}
+
 // 设置BasicSearchType是为了区分'S-Input' | 'SS-Input'，实际上render和SelectInput一样;
 export type BasicSearchType = 'S-Input' | 'SS-Input' | 'DateRange';
 export interface BasicSearchDecorator {
@@ -212,13 +220,13 @@ export interface BasicSearchDecorator {
 }
 
 export type AdvanceSearchType = 'Select' | 'SelectInput' | 'DateRange' | 'Input' | 'InputNumber'
-  | 'Radio' | 'DatePicker' | 'NumberInterval' | 'OptGroupSelect' | 'Checkbox';
+  | 'Radio' | 'DatePicker' | 'NumberInterval' | 'OptGroupSelect' | 'Checkbox' | 'Switch';
 export interface AdvanceSearchDecorator {
   type: AdvanceSearchType | 'custom';
   label?: string;
   // tslint:disable-next-line:max-line-length
   props?: BaseSelectDecorator | SelectInputDecorator | DateRangeDecorator | InputDecorator | InputNumberDecorator | RadioDecorator |
-  DatePickerDecorator | NumberIntervalDecorator | OptGroupSelectDecorator | CheckboxDecorator;
+  DatePickerDecorator | NumberIntervalDecorator | OptGroupSelectDecorator | CheckboxDecorator | SwitchDecorator;
   customRender?: (form?: WrappedFormUtils) => React.ReactNode;
 }
 
@@ -490,6 +498,9 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           fieldsValue[props.fieldsName[1]] = initialValueNumber[1];
           break;
         case 'Checkbox':
+          fieldsValue[props.fieldName] = props.initialValue;
+          break;
+        case 'Switch':
           fieldsValue[props.fieldName] = props.initialValue;
           break;
         default:
@@ -819,6 +830,22 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     );
   }
 
+  renderSwitch(config) {
+    const { type, label } = config;
+    const props = config.props as SwitchDecorator;
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <FormItem label={label} key={props.fieldName}>
+        {getFieldDecorator(props.fieldName, {
+          valuePropName: 'checked',
+          initialValue: this.getInitialValue(type, props.fieldName, props.initialValue || false),
+        })(
+          <Switch {...(props.antdSwitchProps || {})} />,
+        )}
+      </FormItem>
+    );
+  }
+
   renderFormItem(advanceSearchs: AdvanceSearchDecorator[]) {
     if (advanceSearchs.length === 0) {
       return null;
@@ -855,6 +882,9 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           break;
         case 'Checkbox':
           _Component = this.renderCheckbox(config);
+          break;
+        case 'Switch':
+          _Component = this.renderSwitch(config);
           break;
         case 'custom':
           _Component = config.customRender && config.customRender(this.props.form);
