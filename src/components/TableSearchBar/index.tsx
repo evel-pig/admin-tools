@@ -18,6 +18,7 @@ import { SINPUT_CONFIG, SSINPUT_CONFIG, DATERANGE_CONFIG } from './constanst';
 import './index.less';
 import { createGetClassName } from '../../util/util';
 import { CheckboxGroupProps } from 'antd/lib/checkbox';
+import { SelectProps } from 'antd/lib/select';
 
 const className = createGetClassName('table-search-bar');
 
@@ -132,6 +133,7 @@ export interface BaseSelectDecorator extends CommonSearchPropsDecorator {
   onChange?: (value: any, options: any) => void;
   changeFieldName?: string;
   changeFieldValue?: number | string;
+  antdSelectProps?: Partial<SelectProps>;
 }
 
 export interface BaseInputDecorator {
@@ -551,6 +553,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           initialValue: this.getInitialValue(type, props.fieldName, props.initialValue),
         })(
           <Select
+            {...(props.antdSelectProps || {})}
             placeholder={props.placeholder}
             allowClear={props.allowClear}
             mode={props.mode}
