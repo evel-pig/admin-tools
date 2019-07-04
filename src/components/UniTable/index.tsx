@@ -96,6 +96,8 @@ export interface UniTableOwnProps {
   customRenderTable?: (table: any) => React.ReactNode;
   /** table footer */
   footer?: (currentPageData: Object[]) => React.ReactNode;
+  /** table row key */
+  rowKey?: string | ((record: any, index: number) => string);
 }
 
 interface UniTableProps extends UniTableOwnProps { }
@@ -300,6 +302,13 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     }
   }
 
+  getRowkey = () => {
+    if (this.props.rowKey) {
+      return this.props.rowKey;
+    }
+    return (record, index) => record.key || index.toString();
+  }
+
   render() {
     const { tableState: t, columns, toolbarButtons, renderOtherSearchs, pagination } = this.props;
     const tableState = t || {
@@ -321,7 +330,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
           <Table
             {...UniTable.globalTableProps}
             columns={columns}
-            rowKey={(record, index) => index.toString()}
+            rowKey={this.getRowkey()}
             dataSource={tableState.infos}
             pagination={_pagination}
             onChange={this.handleTableOnChange}
