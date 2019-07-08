@@ -160,7 +160,11 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     this.unsubscribeRefreshUniTable = adminEvent.on('refreshUniTable', ({ refreshAction }) => {
       if (this.props.apiAction && refreshAction) {
         if (this.props.apiAction().type === refreshAction().type) {
-          this.tableSearchBar.handleSearch();
+          if (this.tableSearchBar) {
+            this.tableSearchBar.handleSearch();
+          } else {
+            this.getTableList({}, this.props.tableState.pagination.current, this.props.tableState.pagination.pageSize);
+          }
         }
       }
     });
