@@ -16,6 +16,7 @@ import EnhanceTab from './EnhanceTab';
 import BaiscHeaderEx, { HeaderMenuItems } from './BaiscHeaderEx';
 import Setting from './Setting';
 import BasicSiderMenu from './BasicSiderMenu';
+import moment from 'moment';
 
 const getClassName = createGetClassName('basic-layout');
 
@@ -77,6 +78,8 @@ export class BasicLayout extends LayoutComponent<BasicLayoutProps, any> {
       title = activePane.tab;
     }
 
+    const currentYear = moment().format('YYYY');
+
     return (
       <DocumentTitle title={this.getPageTitle(title)}>
         <LocaleProvider locale={zh_CN} >
@@ -95,7 +98,7 @@ export class BasicLayout extends LayoutComponent<BasicLayoutProps, any> {
                     {...passProps}
                   />
                 </ErrorBoundary>
-                <Footer copyright={`2018 ${this.props.app.appName}`}/>
+                <Footer copyright={`${currentYear} ${this.props.app.appName}`}/>
               </Content>
             </Layout>
           </Layout>
