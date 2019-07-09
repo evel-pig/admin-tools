@@ -9,6 +9,7 @@ import TableSearchBar, {
   BasicSearchType,
   BasicSearchDecorator,
   AdvanceSearchDecorator,
+  AcreenSearch,
 } from '../TableSearchBar';
 import { connect } from '../../util/inject';
 import { ListState } from '../../model/listReducers';
@@ -53,6 +54,8 @@ export interface UniTableOwnProps {
   basicSearchs?: BasicSearchType[] | BasicSearchDecorator[];
   /** 高级搜索 */
   advanceSearchs?: AdvanceSearchDecorator[];
+  /** 筛选搜索 */
+  screenSearch?: AcreenSearch[];
   /** 按钮渲染 */
   toolbarButtons?: ToolbarButtonDecorator[];
   /** 其他搜索 */
@@ -282,6 +285,27 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     }
   }
 
+  renderScreenSearchs = () => {
+    const { screenSearch, basicSearchs, tableState, omitSearchs } = this.props;
+    if (basicSearchs || screenSearch) {
+      return (
+        <TableSearchBar
+          onReset={this.handleReset}
+          onSearch={this.handleSearch}
+          onChange={this.handleChange}
+          advanceSearchs={screenSearch}
+          basicSearchs={basicSearchs}
+          fieldsValue={this.props.transformQueryDataIn(tableState ? tableState.fieldsValue || {} : {})}
+          wrappedComponentRef={(form) => this.tableSearchBar = form}
+          omitSearchs={omitSearchs}
+          searchText="筛选"
+        />
+      );
+    } else {
+      return null;
+    }
+  }
+
   handleChangeRow = (selectedRowKeys, selectedRows) => {
     this.setState({
       selectedRowKeys: selectedRowKeys,
@@ -325,6 +349,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     return (
       <div className={getClassName('tableList')}>
         {this.renderAdvanceSearchs()}
+        {this.renderScreenSearchs()}
         {renderOtherSearchs}
         <div className={'tableListOperator'}>
           {toolbarButtons && toolbarButtons.length > 0 ? this.renderButtonBar() : null}

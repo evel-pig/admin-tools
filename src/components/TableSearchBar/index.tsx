@@ -230,6 +230,10 @@ export interface AdvanceSearchDecorator {
   customRender?: (form?: WrappedFormUtils) => React.ReactNode;
 }
 
+export interface AcreenSearch extends AdvanceSearchDecorator {
+
+}
+
 export interface TableSearchBarOwnProps {
   basicSearchs?: BasicSearchType[] | BasicSearchDecorator[];
   advanceSearchs?: AdvanceSearchDecorator[];
@@ -239,6 +243,7 @@ export interface TableSearchBarOwnProps {
   fieldsValue: any;
   wrappedComponentRef?: any;
   omitSearchs?: any;
+  searchText?: string;
 }
 
 export interface TableSearchBarProps extends TableSearchBarOwnProps, FormComponentProps {
@@ -907,13 +912,14 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
       showExpandFormToggle = true;
       advanceSearchs = advanceSearchs.slice(0, 2);
     }
+    const searchText = this.props.searchText ? this.props.searchText : '查询';
     return (
       <Form onSubmit={this.handleSearch} layout={'inline'}>
         {this.renderFormItem(advanceSearchs)}
         {!this.state.expandForm ?
           <FormItem>
             <div>
-              <Button type="primary" htmlType="submit">查询</Button>
+              <Button type="primary" htmlType="submit">{searchText}</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
               {showExpandFormToggle ?
                 <a className="toogle-form" style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -924,7 +930,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
         {this.state.expandForm ?
           <div style={{ overflow: 'hidden' }}>
             <div style={{ float: 'right' }}>
-              <Button type="primary" htmlType="submit">查询</Button>
+              <Button type="primary" htmlType="submit">{searchText}</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
                 收起 <Icon type="up" />
