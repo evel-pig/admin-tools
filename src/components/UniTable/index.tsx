@@ -22,7 +22,7 @@ import adminEvent from '../../event';
 const getClassName = createGetClassName('unitable');
 
 export { ColumnProps as TableColumnConfig } from 'antd/lib/table';
-export { BasicSearchDecorator, AdvanceSearchDecorator } from '../TableSearchBar';
+export { BasicSearchDecorator, AdvanceSearchDecorator, AcreenSearch } from '../TableSearchBar';
 
 export interface ToolbarButtonDecorator {
   key: string;
