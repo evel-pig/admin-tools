@@ -9,7 +9,7 @@ import TableSearchBar, {
   BasicSearchType,
   BasicSearchDecorator,
   AdvanceSearchDecorator,
-  AcreenSearch,
+  AcreenSearchDecorator,
 } from '../TableSearchBar';
 import { connect } from '../../util/inject';
 import { ListState } from '../../model/listReducers';
@@ -22,7 +22,7 @@ import adminEvent from '../../event';
 const getClassName = createGetClassName('unitable');
 
 export { ColumnProps as TableColumnConfig } from 'antd/lib/table';
-export { BasicSearchDecorator, AdvanceSearchDecorator, AcreenSearch } from '../TableSearchBar';
+export { BasicSearchDecorator, AdvanceSearchDecorator, AcreenSearchDecorator } from '../TableSearchBar';
 
 export interface ToolbarButtonDecorator {
   key: string;
@@ -55,7 +55,7 @@ export interface UniTableOwnProps {
   /** 高级搜索 */
   advanceSearchs?: AdvanceSearchDecorator[];
   /** 筛选搜索 */
-  screenSearch?: AcreenSearch[];
+  screenSearch?: AcreenSearchDecorator[];
   /** 按钮渲染 */
   toolbarButtons?: ToolbarButtonDecorator[];
   /** 其他搜索 */
