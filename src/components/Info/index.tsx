@@ -9,6 +9,8 @@ export interface InfoItemDecorator {
   label?: string;
   /** col span */
   span?: number;
+  /** col offset */
+  offset?: number;
   /** 固定宽度 */
   width?: number;
   /** 内容 */
@@ -70,7 +72,7 @@ export default class Info extends React.Component<InfoProps, any> {
                   };
                 }
                 return (
-                  <Col style={style} span={item.span || span} key={index2.toString()}>
+                  <Col style={style} span={item.span || span} offset={item.offset} key={index2.toString()}>
                     {item.customerValue ? item.customerValue
                       : <p className="ant-form-text">{formatLabel(item.label)}{item.text}</p>}
                   </Col>
