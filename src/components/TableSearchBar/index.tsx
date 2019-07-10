@@ -244,6 +244,7 @@ export interface TableSearchBarOwnProps {
   wrappedComponentRef?: any;
   omitSearchs?: any;
   searchText?: string;
+  toolbarButtons?: React.ReactNode;
 }
 
 export interface TableSearchBarProps extends TableSearchBarOwnProps, FormComponentProps {
@@ -906,6 +907,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
    * 渲染表单
    */
   renderForm() {
+    const { toolbarButtons } = this.props;
     let advanceSearchs = this.state.advanceSearchs;
     let showExpandFormToggle = false;
     if (advanceSearchs.length > 2 && this.props.omitSearchs && !this.state.expandForm) {
@@ -937,6 +939,9 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
               </a>
             </div>
           </div> : null}
+        <div className={className('tablesearch-button')}>
+          {toolbarButtons}
+        </div>
       </Form>
     );
   }

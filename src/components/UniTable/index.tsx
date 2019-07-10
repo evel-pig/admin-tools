@@ -43,6 +43,8 @@ export interface PageKeyName {
   pageSize: string;
 }
 
+export type buttonsDirectionTypes = 'top' | 'bottom';
+
 export interface UniTableOwnProps {
   /** 请求列表的apiAction */
   apiAction?: any;
@@ -58,6 +60,8 @@ export interface UniTableOwnProps {
   screenSearch?: AcreenSearchDecorator[];
   /** 按钮渲染 */
   toolbarButtons?: ToolbarButtonDecorator[];
+  /** 按钮方向 */
+  buttonsDirection?: buttonsDirectionTypes;
   /** 其他搜索 */
   renderOtherSearchs?: any;
   /** 首次渲染是否请求apiAction */
@@ -266,7 +270,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   }
 
   renderAdvanceSearchs = () => {
-    const { basicSearchs, advanceSearchs, tableState, omitSearchs } = this.props;
+    const { basicSearchs, advanceSearchs, tableState, omitSearchs, buttonsDirection } = this.props;
     if (basicSearchs || advanceSearchs) {
       return (
         <TableSearchBar
@@ -278,6 +282,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
           fieldsValue={this.props.transformQueryDataIn(tableState ? tableState.fieldsValue || {} : {})}
           wrappedComponentRef={(form) => this.tableSearchBar = form}
           omitSearchs={omitSearchs}
+          toolbarButtons={buttonsDirection === 'top' && this.renderButtonBar()}
         />
       );
     } else {
@@ -286,20 +291,26 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   }
 
   renderScreenSearchs = () => {
-    const { screenSearch, basicSearchs, tableState, omitSearchs } = this.props;
-    if (basicSearchs || screenSearch) {
+    const { screenSearch, advanceSearchs, tableState, omitSearchs } = this.props;
+    const style = {
+      borderTop: '1px solid #ccc',
+      marginTop: 12,
+      paddingTop: 12,
+    };
+    if (screenSearch) {
       return (
-        <TableSearchBar
-          onReset={this.handleReset}
-          onSearch={this.handleSearch}
-          onChange={this.handleChange}
-          advanceSearchs={screenSearch}
-          basicSearchs={basicSearchs}
-          fieldsValue={this.props.transformQueryDataIn(tableState ? tableState.fieldsValue || {} : {})}
-          wrappedComponentRef={(form) => this.tableSearchBar = form}
-          omitSearchs={omitSearchs}
-          searchText="筛选"
-        />
+        <div style={advanceSearchs.length > 0 && style}>
+          <TableSearchBar
+            onReset={this.handleReset}
+            onSearch={this.handleSearch}
+            onChange={this.handleChange}
+            advanceSearchs={screenSearch}
+            fieldsValue={this.props.transformQueryDataIn(tableState ? tableState.fieldsValue || {} : {})}
+            wrappedComponentRef={(form) => this.tableSearchBar = form}
+            omitSearchs={omitSearchs}
+            searchText="筛选"
+          />
+        </div>
       );
     } else {
       return null;
@@ -338,7 +349,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   }
 
   render() {
-    const { tableState: t, columns, toolbarButtons, renderOtherSearchs, pagination } = this.props;
+    const { tableState: t, columns, toolbarButtons, renderOtherSearchs, pagination, buttonsDirection } = this.props;
     const tableState = t || {
       infos: [],
       pagination: null,
@@ -352,7 +363,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
         {this.renderScreenSearchs()}
         {renderOtherSearchs}
         <div className={'tableListOperator'}>
-          {toolbarButtons && toolbarButtons.length > 0 ? this.renderButtonBar() : null}
+          {toolbarButtons && toolbarButtons.length > 0 && buttonsDirection === 'bottom' ? this.renderButtonBar() : null}
         </div>
         {this.props.tableHeader}
         {this.renderTable(
