@@ -230,7 +230,7 @@ export interface AdvanceSearchDecorator {
   customRender?: (form?: WrappedFormUtils) => React.ReactNode;
 }
 
-export interface AcreenSearchDecorator extends AdvanceSearchDecorator {
+export interface ScreenSearchDecorator extends AdvanceSearchDecorator {
 
 }
 
