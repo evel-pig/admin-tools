@@ -137,11 +137,13 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     onExpand: () => { },
     expandIcon: () => false,
     expandedRowKeys: [],
+    buttonsDirection: 'bottom',
   };
 
-  tableSearchBar: any;
-
   unsubscribeRefreshUniTable = null;
+
+  advanceSearchFirstValues = null;
+  screenSearchFirstValues = null;
 
   constructor(props) {
     super(props);
@@ -154,24 +156,14 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   componentDidMount() {
     const { firstLoadData } = this.props;
     if (firstLoadData) {
-      let defaultValues = {};
-      if (this.tableSearchBar) {
-        defaultValues = this.tableSearchBar.getDefaultValue();
-        defaultValues = this.tableSearchBar.transfromValues(defaultValues);
+      if (!this.props.advanceSearchs) {
+        this.getTableList({});
       }
-      this.getTableList({
-        ...defaultValues,
-        ...this.props.transformQueryDataIn(this.props.tableState ? this.props.tableState.fieldsValue : {}),
-      });
     }
     this.unsubscribeRefreshUniTable = adminEvent.on('refreshUniTable', ({ refreshAction }) => {
       if (this.props.apiAction && refreshAction) {
         if (this.props.apiAction().type === refreshAction().type) {
-          if (this.tableSearchBar) {
-            this.tableSearchBar.handleSearch();
-          } else {
-            this.getTableList({}, this.props.tableState.pagination.current, this.props.tableState.pagination.pageSize);
-          }
+          this.getTableList(this.props.transformQueryDataIn(this.props.tableState.fieldsValue || {}));
         }
       }
     });
@@ -269,6 +261,25 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     });
   }
 
+  handleAdvanceSearchFirstLoad = (values) => {
+    this.advanceSearchFirstValues = values || {};
+    this.firstLoadWithSearchs();
+  }
+
+  handleScreenFirstLoad = (values) => {
+    this.screenSearchFirstValues = values || {};
+    this.firstLoadWithSearchs();
+  }
+
+  firstLoadWithSearchs = () => {
+    if (this.advanceSearchFirstValues && this.screenSearchFirstValues) {
+      this.getTableList({
+        ...this.advanceSearchFirstValues,
+        ...this.screenSearchFirstValues,
+      });
+    }
+  }
+
   renderAdvanceSearchs = () => {
     const { basicSearchs, advanceSearchs, tableState, omitSearchs, buttonsDirection } = this.props;
     if (basicSearchs || advanceSearchs) {
@@ -280,9 +291,10 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
           advanceSearchs={advanceSearchs}
           basicSearchs={basicSearchs}
           fieldsValue={this.props.transformQueryDataIn(tableState ? tableState.fieldsValue || {} : {})}
-          wrappedComponentRef={(form) => this.tableSearchBar = form}
           omitSearchs={omitSearchs}
           toolbarButtons={buttonsDirection === 'top' && this.renderButtonBar()}
+          firstLoadData={this.props.firstLoadData}
+          onFirstLoad={this.handleAdvanceSearchFirstLoad}
         />
       );
     } else {
@@ -306,9 +318,10 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
             onChange={this.handleChange}
             advanceSearchs={screenSearch}
             fieldsValue={this.props.transformQueryDataIn(tableState ? tableState.fieldsValue || {} : {})}
-            wrappedComponentRef={(form) => this.tableSearchBar = form}
             omitSearchs={omitSearchs}
             searchText="筛选"
+            firstLoadData={this.props.firstLoadData}
+            onFirstLoad={this.handleScreenFirstLoad}
           />
         </div>
       );

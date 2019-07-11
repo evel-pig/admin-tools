@@ -245,6 +245,8 @@ export interface TableSearchBarOwnProps {
   omitSearchs?: any;
   searchText?: string;
   toolbarButtons?: React.ReactNode;
+  firstLoadData?: boolean;
+  onFirstLoad?: (fieldsvalue) => void;
 }
 
 export interface TableSearchBarProps extends TableSearchBarOwnProps, FormComponentProps {
@@ -315,6 +317,30 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     };
   }
 
+  componentDidMount() {
+    if ((this.props.basicSearchs || this.props.advanceSearchs) && this.props.firstLoadData) {
+      if (this.props.onFirstLoad) {
+        this.props.onFirstLoad({
+          ...this.getResetValues(),
+          ...this.props.fieldsValue,
+        });
+      }
+    }
+  }
+
+  componentDidUpdate(prevProps: TableSearchBarProps, prevState) {
+    if (prevProps.fieldsValue !== this.props.fieldsValue) {
+      const needResetFields = [];
+      const currentValues = this.props.form.getFieldsValue();
+      Object.keys(currentValues).forEach(key => {
+        if (this.props.fieldsValue[key] === undefined || this.props.fieldsValue[key] === null) {
+          needResetFields.push(key);
+        }
+      });
+      this.props.form.resetFields(needResetFields);
+    }
+  }
+
   /**
    * 获取BasicSearchs;
    * 传进来string：使用默认的config;
@@ -376,12 +402,15 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     });
   }
 
-  handleFormReset = () => {
-    const { form } = this.props;
-    form.resetFields();
+  getResetValues = () => {
     const fieldsValue = this.getDefaultValue();
     const _fieldsValue = this.transfromValues(fieldsValue);
-    this.props.onReset(_fieldsValue);
+    return _fieldsValue;
+  }
+
+  handleFormReset = () => {
+    this.props.form.resetFields();
+    this.props.onReset(this.getResetValues());
   }
 
   /**
@@ -604,7 +633,6 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   renderOptGroupSelect = (config) => {
     const { type, label, props } = config;
     const { getFieldDecorator } = this.props.form;
-    console.log('props', props);
     return (
       <FormItem label={label} key={props.fieldName}>
         {getFieldDecorator(props.fieldName as never, {
@@ -903,17 +931,26 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     });
   }
 
-  /**
-   * 渲染表单
-   */
-  renderForm() {
-    const { toolbarButtons } = this.props;
+  getRealSearchs = () => {
     let advanceSearchs = this.state.advanceSearchs;
     let showExpandFormToggle = false;
     if (advanceSearchs.length > 2 && this.props.omitSearchs && !this.state.expandForm) {
       showExpandFormToggle = true;
       advanceSearchs = advanceSearchs.slice(0, 2);
     }
+
+    return {
+      advanceSearchs,
+      showExpandFormToggle,
+    };
+  }
+
+  /**
+   * 渲染表单
+   */
+  renderForm() {
+    const { toolbarButtons } = this.props;
+    const { advanceSearchs, showExpandFormToggle } = this.getRealSearchs();
     const searchText = this.props.searchText ? this.props.searchText : '查询';
     return (
       <Form onSubmit={this.handleSearch} layout={'inline'}>
