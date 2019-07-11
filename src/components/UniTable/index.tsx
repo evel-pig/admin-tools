@@ -90,6 +90,8 @@ export interface UniTableOwnProps {
   onFieldsValueReset?: (fieldsValue: any) => void;
   /** advanceSearchs是否折叠 */
   omitSearchs?: boolean;
+  /** advanceSearchs折叠数量 */
+  omitSearchsNum?: number;
   processQueryData?: (queryData) => any;
   tableHeader?: React.ReactNode;
   onGetData?: (requestParams: any, fieldsValue: any, pageNo: number, pageSize: number) => void;
@@ -126,6 +128,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     rowSelection: false,
     drag: false,
     omitSearchs: true,
+    omitSearchsNum: 2,
     transformQueryDataIn: (queryData) => queryData,
     transformQueryDataOut: (queryData) => {
       return {
@@ -281,7 +284,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   }
 
   renderAdvanceSearchs = () => {
-    const { basicSearchs, advanceSearchs, tableState, omitSearchs, buttonsDirection } = this.props;
+    const { basicSearchs, advanceSearchs, tableState, omitSearchs, buttonsDirection, omitSearchsNum } = this.props;
     if (basicSearchs || advanceSearchs) {
       return (
         <TableSearchBar
@@ -292,6 +295,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
           basicSearchs={basicSearchs}
           fieldsValue={this.props.transformQueryDataIn(tableState ? tableState.fieldsValue || {} : {})}
           omitSearchs={omitSearchs}
+          omitSearchsNum={omitSearchsNum}
           toolbarButtons={buttonsDirection === 'top' && this.renderButtonBar()}
           firstLoadData={this.props.firstLoadData}
           onFirstLoad={this.handleAdvanceSearchFirstLoad}
@@ -303,7 +307,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   }
 
   renderScreenSearchs = () => {
-    const { screenSearch, advanceSearchs, tableState, omitSearchs } = this.props;
+    const { screenSearch, advanceSearchs, tableState, omitSearchs, omitSearchsNum } = this.props;
     const style = {
       borderTop: '1px solid #ccc',
       marginTop: 12,
@@ -319,6 +323,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
             advanceSearchs={screenSearch}
             fieldsValue={this.props.transformQueryDataIn(tableState ? tableState.fieldsValue || {} : {})}
             omitSearchs={omitSearchs}
+            omitSearchsNum={omitSearchsNum}
             searchText="筛选"
             firstLoadData={this.props.firstLoadData}
             onFirstLoad={this.handleScreenFirstLoad}

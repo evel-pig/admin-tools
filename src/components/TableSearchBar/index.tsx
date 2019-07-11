@@ -243,6 +243,7 @@ export interface TableSearchBarOwnProps {
   fieldsValue: any;
   wrappedComponentRef?: any;
   omitSearchs?: any;
+  omitSearchsNum?: number;
   searchText?: string;
   toolbarButtons?: React.ReactNode;
   firstLoadData?: boolean;
@@ -481,9 +482,10 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   getDefaultValue() {
+    const { omitSearchsNum } = this.props;
     let advanceSearchs = this.state.advanceSearchs;
-    if (advanceSearchs.length > 2 && this.props.omitSearchs && !this.state.expandForm) {
-      advanceSearchs = advanceSearchs.slice(0, 2);
+    if (advanceSearchs.length > omitSearchsNum && this.props.omitSearchs && !this.state.expandForm) {
+      advanceSearchs = advanceSearchs.slice(0, omitSearchsNum);
     }
     let fieldsValue = {};
     for (let config of advanceSearchs) {
@@ -932,11 +934,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   getRealSearchs = () => {
+    const { omitSearchsNum } = this.props;
     let advanceSearchs = this.state.advanceSearchs;
     let showExpandFormToggle = false;
-    if (advanceSearchs.length > 2 && this.props.omitSearchs && !this.state.expandForm) {
+    if (advanceSearchs.length > omitSearchsNum && this.props.omitSearchs && !this.state.expandForm) {
       showExpandFormToggle = true;
-      advanceSearchs = advanceSearchs.slice(0, 2);
+      advanceSearchs = advanceSearchs.slice(0, omitSearchsNum);
     }
 
     return {
