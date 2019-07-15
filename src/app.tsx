@@ -1,4 +1,3 @@
-import '@babel/polyfill';
 import { sagas as commonSagas, reducers as commonReducers } from './commonModels';
 import { getNavData, GetNavDataOptions } from './router/nav';
 import './app.less';
