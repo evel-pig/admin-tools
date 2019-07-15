@@ -5,7 +5,7 @@ const processResponse = res => res.data;
 const app = new App({
   appName: 'epig-test-admin-app',
   routes: () => require('../.admin-tools/router'),
-  noRequestMenu: true,
+  // noRequestMenu: true,
   customMenus: () => [
     {
       id: 1,
@@ -25,6 +25,14 @@ const app = new App({
     key: 'epig-test-admin-app',
   },
   processResponse: processResponse,
+  getOperatorInfoConfig: {
+    apiPath: '/system/managerInfo',
+    handleSuccess: (state, action) => {
+      return {
+        menus: action.payload.res.menus,
+      };
+    },
+  },
 });
 
 app.start('root');

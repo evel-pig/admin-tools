@@ -5,7 +5,8 @@ import './app.less';
 import router, { NavData } from './router';
 import { message as antdMessage, Spin } from 'antd';
 import { history, adminNormalActions } from './util/util';
-import menuModel, { MenuDecorator, MenuState } from './commonModels/menu';
+import menuModel, { MenuDecorator, MenuState, GetOperatorInfoConfig
+, setGetOperatorInfoConfig } from './commonModels/menu';
 import React from 'react';
 import TTApp, { AppOptions, AppPersistConfig, StoreConfig } from '@epig/luna';
 import { createTransform } from '@epig/luna/lib/persist';
@@ -190,6 +191,7 @@ export interface TTAdminAppOptions {
   /** 发起checkPermission action，配合noRequestMenu使用 */
   checkPermission?: boolean;
   navDataOptions?: GetNavDataOptions;
+  getOperatorInfoConfig?: GetOperatorInfoConfig;
 }
 
 const DEFAULT_TTADMINAPP_OPTIONS: TTAdminAppOptions = {
@@ -253,6 +255,8 @@ export default class TTAdminApp {
       },
     };
     this._core = new TTApp(ttAppOptions);
+
+    setGetOperatorInfoConfig(options.getOperatorInfoConfig);
 
     if (!options.model || !options.model.noCommonModels) {
       this.model(commonReducers, commonSagas);

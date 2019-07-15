@@ -84,6 +84,33 @@ export interface MenuState {
   modalPaneConfig: ModalPaneConfig;
 }
 
+export interface GetOperatorInfoConfig {
+  /**
+   * 获取用户信息接口
+   */
+  apiPath: string;
+  /**
+   * 处理返回数据
+   */
+  handleSuccess: (state, action) => any;
+}
+
+let getOperatorInfoConfig: GetOperatorInfoConfig = {
+  apiPath: '/system/getOperatorInfo',
+  handleSuccess: (state, action) => {
+    return {
+      menus: action.payload.res.operatorInfo.menus,
+      name: action.payload.res.operatorInfo.name,
+    };
+  },
+};
+
+export function setGetOperatorInfoConfig(newConfig: GetOperatorInfoConfig) {
+  if (newConfig) {
+    getOperatorInfoConfig = newConfig;
+  }
+}
+
 const model = createModel({
   modelName: 'menu',
   action: {
@@ -117,7 +144,7 @@ const model = createModel({
     },
     api: {
       getOperatorInfo: {
-        path: '/system/getOperatorInfo',
+        path: () => getOperatorInfoConfig.apiPath,
       },
     },
   },
@@ -243,9 +270,8 @@ const model = createModel({
       [apiActionNames.getOperatorInfo.success](state, action) {
         return {
           ...state,
-          menus: action.payload.res.operatorInfo.menus,
           loading: false,
-          name: action.payload.res.operatorInfo.name,
+          ...getOperatorInfoConfig.handleSuccess(state, action),
         };
       },
       [apiActionNames.getOperatorInfo.error](state, action) {
