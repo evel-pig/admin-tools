@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import LayoutComponent from '../components/LayoutComponent';
 import DocumentTitle from 'react-document-title';
 import { createGetClassName } from '../util/util';
-import DynamicComponent from '@epig/luna/DynamicComponent';
+import { DynamicComponent } from '@epig/luna';
 
 const getClassName = createGetClassName('user-layout');
 

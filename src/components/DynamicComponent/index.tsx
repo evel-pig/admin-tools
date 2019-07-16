@@ -1,3 +1,3 @@
-export * from '@epig/luna/DynamicComponent';
-export { default as default } from '@epig/luna/DynamicComponent';
+export * from '@epig/luna/lib/DynamicComponent';
+export { DynamicComponent as default } from '@epig/luna';
 export { setDefaultLoadingComponent } from '@epig/luna/lib/DynamicComponent';

@@ -1,2 +1,2 @@
-export * from '@epig/luna/model';
-export { default as createModel } from '@epig/luna/model';
+export * from '@epig/luna/lib/model';
+export { createModel } from '@epig/luna';
