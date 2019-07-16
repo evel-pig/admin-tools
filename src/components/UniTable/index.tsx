@@ -159,7 +159,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   componentDidMount() {
     const { firstLoadData } = this.props;
     if (firstLoadData) {
-      if (!this.props.advanceSearchs) {
+      if (!this.props.advanceSearchs && !this.props.screenSearch) {
         this.getTableList({});
       }
     }
@@ -275,7 +275,8 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   }
 
   firstLoadWithSearchs = () => {
-    if (this.advanceSearchFirstValues && this.screenSearchFirstValues) {
+    if ((!this.props.advanceSearchs || this.advanceSearchFirstValues)
+    && (!this.props.screenSearch || this.screenSearchFirstValues)) {
       this.getTableList({
         ...this.advanceSearchFirstValues,
         ...this.screenSearchFirstValues,
@@ -307,7 +308,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
   }
 
   renderScreenSearchs = () => {
-    const { screenSearch, advanceSearchs, tableState, omitSearchs, omitSearchsNum } = this.props;
+    const { screenSearch = [], advanceSearchs = [], tableState, omitSearchs, omitSearchsNum } = this.props;
     const style = {
       borderTop: '1px solid #ccc',
       marginTop: 12,
@@ -315,7 +316,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     };
     if (screenSearch) {
       return (
-        <div style={advanceSearchs.length > 0 && style}>
+        <div style={advanceSearchs.length > 0 ? style : {}}>
           <TableSearchBar
             onReset={this.handleReset}
             onSearch={this.handleSearch}
