@@ -146,12 +146,12 @@ export interface BaseInputDecorator {
 
 export interface DateRangeDecorator extends CommonSearchPropsDecorator {
   fieldsName: string[];
-  initialValue?: moment.Moment[];
-  placeholder?: string[];
+  initialValue: moment.Moment[];
+  placeholder: string[];
   format?: string;
-  dateSelects?: DateSelect[] | true;
+  dateSelects: DateSelect[] | true;
   allowClear?: boolean;
-  addonSelect?: BaseSelectDecorator;
+  timeZone?: BaseSelectDecorator | boolean;
 }
 
 export interface SelectInputDecorator {
@@ -239,7 +239,7 @@ export interface TableSearchBarOwnProps {
   advanceSearchs?: AdvanceSearchDecorator[];
   onSearch: (fieldsValue) => void;
   onReset: (fieldsValue) => void;
-  onChange?: (fieldsvalue, form?: WrappedFormUtils) => void;
+  onChange?: (fieldsvalue) => void;
   fieldsValue: any;
   wrappedComponentRef?: any;
   omitSearchs?: any;
@@ -255,12 +255,9 @@ export interface TableSearchBarProps extends TableSearchBarOwnProps, FormCompone
 
 interface TableSearchBarState {
   expandForm: boolean;
-  momentField: Record<string, any>;
+  basicSearchs: AdvanceSearchDecorator[];
   advanceSearchs: AdvanceSearchDecorator[];
 }
-
-const DEFAULT_STARTTIME = '00:00:00';
-const DEFAULT_ENDTIME = '23:59:59';
 
 /**
  * 合并object,会覆盖第一个object值
@@ -286,167 +283,106 @@ function assign(to, from) {
   return _obj;
 }
 
-/**
-   * 获取BasicSearchs;
-   * 传进来string：使用默认的config;
-   * 传进来object：object的值覆盖默认的config;
-   * @param search
-   */
-function getBasicSearchs(search: BasicSearchDecorator) {
-  let config;
-  let isString = typeof search === 'string';
-  let type = isString ? search : search.type;
-  switch (type) {
-    case 'S-Input':
-      if (isString) {
-        config = { ...SINPUT_CONFIG };
-      } else {
-        // 合并传进来的数据
-        config = assign(SINPUT_CONFIG, search);
-      }
-      config.type = 'SelectInput'; // 重置为advanceSearchs的SelectInput;
-      break;
-    case 'SS-Input':
-      if (isString) {
-        config = { ...SSINPUT_CONFIG };
-      } else {
-        // 合并传进来的数据
-        config = assign(SSINPUT_CONFIG, search);
-      }
-      config.type = 'SelectInput'; // 重置为advanceSearchs的SelectInput;
-      break;
-    case 'DateRange':
-      if (isString) {
-        config = { ...DATERANGE_CONFIG };
-      } else {
-        // 合并传进来的数据
-        config = assign(DATERANGE_CONFIG, search);
-      }
-      break;
-    default:
-      break;
-  }
-  return config;
-}
-
-/**
- * 将basicSearchs合并到advanceSearchs;
- * @param basicSearchs
- * @param advanceSearchs
- */
-function getAdvanceSearchs(basicSearchs, advanceSearchs) {
-  let _advanceSearchs: AdvanceSearchDecorator[] = [];
-  if (basicSearchs && basicSearchs.length > 0) {
-    for (let search of basicSearchs) {
-      _advanceSearchs.push(getBasicSearchs(search));
-    }
-  }
-
-  if (advanceSearchs && advanceSearchs.length > 0) {
-    _advanceSearchs = _advanceSearchs.concat(advanceSearchs);
-  }
-
-  // 从配置进来的记录需要转换moment的field
-  const momentField = {};
-
-  _advanceSearchs.forEach(config => {
-    switch (config.type) {
-      case 'DatePicker':
-        let _datePickerProps = config.props as DatePickerDecorator;
-        momentField[_datePickerProps.fieldName] = _datePickerProps.format || DATE_FORMAT;
-        break;
-      case 'DateRange':
-        let _dateRangeProps = config.props as DateRangeDecorator;
-        momentField[_dateRangeProps.fieldsName[0]] = _dateRangeProps.format || DATE_FORMAT;
-        momentField[_dateRangeProps.fieldsName[1]] = _dateRangeProps.format || DATE_FORMAT;
-        break;
-      default:
-        break;
-    }
-  });
-
-  return {
-    momentField: momentField,
-    advanceSearchs: _advanceSearchs,
-  };
-}
+const DEFAULT_STARTTIME = '00:00:00';
+const DEFAULT_ENDTIME = '23:59:59';
 
 class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarState> {
   static getDerivedStateFromProps(nextProps: TableSearchBarProps, prevState: any) {
-    if (prevState.expandForm === false) {
+    if (prevState.expandForm === undefined) {
       return null;
     }
-
-    const { momentField, advanceSearchs } = getAdvanceSearchs(nextProps.basicSearchs, nextProps.advanceSearchs);
-
     return {
-      momentField,
-      advanceSearchs,
+      advanceSearchs: nextProps.advanceSearchs
+        ? prevState.basicSearchs.concat(nextProps.advanceSearchs) : prevState.basicSearchs,
     };
   }
 
   constructor(props) {
     super(props);
-    const { momentField, advanceSearchs } = getAdvanceSearchs(props.basicSearchs, props.advanceSearchs);
+
+    let stateBasicSearchs = [];
+    let stateAdvanceSearchs = [];
+
+    const { basicSearchs, advanceSearchs } = props;
+    if (basicSearchs && basicSearchs.length > 0) {
+      for (let search of basicSearchs) {
+        stateBasicSearchs.push(this.getBasicSearchs(search));
+      }
+    }
+    stateAdvanceSearchs = advanceSearchs ? stateBasicSearchs.concat(advanceSearchs) : stateBasicSearchs;
+
     this.state = {
       expandForm: false,
-      momentField,
-      advanceSearchs,
+      basicSearchs: stateBasicSearchs,
+      advanceSearchs: stateAdvanceSearchs,
     };
   }
 
   componentDidMount() {
-    if (this.props.basicSearchs || this.props.advanceSearchs) {
-      this.setFieldsValueFromState();
-      if (this.props.firstLoadData && this.props.onFirstLoad) {
-        this.props.onFirstLoad(this.getFieldsValue());
+    if ((this.props.basicSearchs || this.props.advanceSearchs) && this.props.firstLoadData) {
+      if (this.props.onFirstLoad) {
+        this.props.onFirstLoad({
+          ...this.getResetValues(),
+          ...this.props.fieldsValue,
+        });
       }
     }
   }
 
   componentDidUpdate(prevProps: TableSearchBarProps, prevState) {
     if (prevProps.fieldsValue !== this.props.fieldsValue) {
-      let shouldUpdate = false;
-      for (const key in prevProps.fieldsValue) {
-        if (prevProps.fieldsValue[key] !== this.props.fieldsValue[key]) {
-          shouldUpdate = true;
-          break;
+      const needResetFields = [];
+      const currentValues = this.props.form.getFieldsValue();
+      Object.keys(currentValues).forEach(key => {
+        if (this.props.fieldsValue[key] === undefined || this.props.fieldsValue[key] === null) {
+          needResetFields.push(key);
         }
-      }
-      if (shouldUpdate) {
-        this.setFieldsValueFromState();
-      }
+      });
+      this.props.form.resetFields(needResetFields);
     }
   }
 
-  setFieldsValueFromState = () => {
-    const needResetFields = [];
-    const _fieldsValue = {};
-    const { fieldsValue } = this.props;
-    const currentValues = this.props.form.getFieldsValue();
-
-    let index = 0;
-    Object.keys(currentValues).forEach(key => {
-      // 读取需要设置的值
-      if (fieldsValue[key] !== undefined && fieldsValue[key] !== null) {
-        index++;
-        if (this.state.momentField[key]) {
-          _fieldsValue[key] = this.getMomentValue(fieldsValue[key]);
+  /**
+   * 获取BasicSearchs;
+   * 传进来string：使用默认的config;
+   * 传进来object：object的值覆盖默认的config;
+   * @param search
+   */
+  getBasicSearchs(search) {
+    let config;
+    let isString = typeof search === 'string';
+    let type = isString ? search : search.type;
+    switch (type) {
+      case 'S-Input':
+        if (isString) {
+          config = { ...SINPUT_CONFIG };
         } else {
-          _fieldsValue[key] = fieldsValue[key];
+          // 合并传进来的数据
+          config = assign(SINPUT_CONFIG, search);
         }
-      } else {
-        needResetFields.push(key);
-      }
-    });
-    // 从this.props.fieldsValue中恢复数据;
-    if (index > 0) {
-      this.props.form.setFieldsValue(_fieldsValue);
+        config.type = 'SelectInput'; // 重置为advanceSearchs的SelectInput;
+        break;
+      case 'SS-Input':
+        if (isString) {
+          config = { ...SSINPUT_CONFIG };
+        } else {
+          // 合并传进来的数据
+          config = assign(SSINPUT_CONFIG, search);
+        }
+        config.type = 'SelectInput'; // 重置为advanceSearchs的SelectInput;
+        break;
+      case 'DateRange':
+        if (isString) {
+          config = { ...DATERANGE_CONFIG };
+        } else {
+          // 合并传进来的数据
+          config = assign(DATERANGE_CONFIG, search);
+        }
+        break;
+      default:
+        break;
     }
-    // this.props.fieldsValue没有数据的就直接reset;
-    if (needResetFields.length > 0) {
-      this.props.form.resetFields(needResetFields);
-    }
+    return config;
   }
 
   toggleForm = () => {
@@ -467,68 +403,148 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     });
   }
 
-  getFieldsValue = () => {
-    const fieldsValue = this.props.form.getFieldsValue();
-    return this.transfromValues(fieldsValue);
+  getResetValues = () => {
+    const fieldsValue = this.getDefaultValue();
+    const _fieldsValue = this.transfromValues(fieldsValue);
+    return _fieldsValue;
   }
 
   handleFormReset = () => {
     this.props.form.resetFields();
-    this.props.onReset(this.getFieldsValue());
+    this.props.onReset(this.getResetValues());
   }
 
   /**
    * 转换fieldsValue
    */
   transfromValues = (fieldsValue) => {
+    let _fieldsValue = fieldsValue;
     for (let item of this.state.advanceSearchs) {
+      if (item.type === 'DateRange') {
+        const props = item.props as DateRangeDecorator;
+        for (let fieldName of props.fieldsName) {
+          _fieldsValue[fieldName] = fieldsValue[fieldName] ?
+            fieldsValue[fieldName].format(props.format || DATE_FORMAT) : null;
+          // 数值为空时删除值;
+          if (!_fieldsValue[fieldName]) {
+            delete _fieldsValue[fieldName];
+          }
+        }
+        if (props.timeZone) {
+          let fieldName = typeof props.timeZone === 'object' ? props.timeZone.fieldName : 'timeZone';
+          if (!_fieldsValue[fieldName]) {
+            delete _fieldsValue[fieldName];
+          }
+        }
+      }
+      if (item.type === 'DatePicker') {
+        const props = item.props as DatePickerDecorator;
+        _fieldsValue[props.fieldName] = fieldsValue[props.fieldName] ?
+          fieldsValue[props.fieldName].format(props.format || DATE_FORMAT) : null;
+        // 数值为空时删除值;
+        if (!_fieldsValue[props.fieldName]) {
+          delete _fieldsValue[props.fieldName];
+        }
+      }
       // 当searchValue为空时，SelectInput的值都忽略掉
       if (item.type === 'SelectInput') {
         const props = item.props as SelectInputDecorator;
         if (props.searchValue.fieldName && !fieldsValue[props.searchValue.fieldName]) {
           if (props.searchValue) {
-            delete fieldsValue[props.searchValue.fieldName];
+            delete _fieldsValue[props.searchValue.fieldName];
           }
           if (props.searchType) {
-            delete fieldsValue[props.searchType.fieldName];
+            delete _fieldsValue[props.searchType.fieldName];
           }
           if (props.mappingType) {
-            delete fieldsValue[props.mappingType.fieldName];
-          }
-        }
-      }
-      if (item.type === 'DateRange') {
-        const props = item.props as DateRangeDecorator;
-        if (props.addonSelect && props.addonSelect.fieldName) {
-          const fieldsNames = props.fieldsName;
-          if (!fieldsValue[fieldsNames[0]] && !fieldsValue[fieldsNames[1]]) {
-            delete fieldsValue[props.addonSelect.fieldName];
+            delete _fieldsValue[props.mappingType.fieldName];
           }
         }
       }
     }
-
-    Object.keys(fieldsValue).forEach(key => {
-      // 只转换从配置进来的moment对象,自定义渲染的自己处理值
-      if (moment.isMoment(fieldsValue[key]) && this.state.momentField[key]) {
-        fieldsValue[key] = fieldsValue[key].format(this.state.momentField[key]);
-      }
-      // 去除为空的值
-      if (fieldsValue[key] === null || fieldsValue[key] === undefined || fieldsValue[key] === '') {
-        delete fieldsValue[key];
-      }
-    });
-    return fieldsValue;
+    return _fieldsValue;
   }
 
-  getMomentValue = (value) => {
-    if (value) {
-      if (moment.isMoment(value)) {
-        return value;
+  /**
+   * 优先设置initialValue为this.props.fieldsValue[fieldName]
+   */
+  getInitialValue = (type, fieldName, defaultValue) => {
+    const fieldsValue = this.props.fieldsValue;
+    let initialValue = defaultValue;
+    if (fieldsValue && fieldsValue[fieldName] !== undefined) {
+      if (type === 'DateRange' || type === 'DatePicker') {
+        initialValue = fieldsValue[fieldName] !== null ? moment(fieldsValue[fieldName]) : null;
+      } else {
+        initialValue = fieldsValue[fieldName];
       }
-      return moment(value);
     }
-    return value;
+    return initialValue;
+  }
+
+  getDefaultValue() {
+    const { omitSearchsNum } = this.props;
+    let advanceSearchs = this.state.advanceSearchs;
+    if (advanceSearchs.length > omitSearchsNum && this.props.omitSearchs && !this.state.expandForm) {
+      advanceSearchs = advanceSearchs.slice(0, omitSearchsNum);
+    }
+    let fieldsValue = {};
+    for (let config of advanceSearchs) {
+      let props: any = config.props;
+      switch (config.type) {
+        case 'Select':
+          fieldsValue[props.fieldName] = props.initialValue;
+          break;
+        case 'SelectInput':
+          const { searchType, mappingType, searchValue } = props as SelectInputDecorator;
+          if (!searchValue.initialValue) {
+            break;
+          }
+          fieldsValue[searchType.fieldName] = searchType.initialValue;
+          fieldsValue[searchValue.fieldName] = searchValue.initialValue;
+          if (mappingType) {
+            fieldsValue[mappingType.fieldName] = mappingType.initialValue;
+          }
+          break;
+        case 'DateRange':
+          const initialValue = props.initialValue || [null, null];
+          fieldsValue[props.fieldsName[0]] = initialValue[0];
+          fieldsValue[props.fieldsName[1]] = initialValue[1];
+          if (props.timeZone) {
+            if (typeof props.timeZone === 'object' && props.timeZone.fieldName) {
+              fieldsValue[props.timeZone.fieldName] = props.timeZone.initialValue || 1;
+            } else {
+              fieldsValue['timeZone'] = 1;
+            }
+          }
+          break;
+        case 'Input':
+          fieldsValue[props.fieldName] = props.initialValue;
+          break;
+        case 'InputNumber':
+          fieldsValue[props.fieldName] = props.initialValue;
+          break;
+        case 'Radio':
+          fieldsValue[props.fieldName] = props.initialValue;
+          break;
+        case 'DatePicker':
+          fieldsValue[props.fieldName] = props.initialValue;
+          break;
+        case 'NumberInterval':
+          const initialValueNumber = props.initialValue || [null, null];
+          fieldsValue[props.fieldsName[0]] = initialValueNumber[0];
+          fieldsValue[props.fieldsName[1]] = initialValueNumber[1];
+          break;
+        case 'Checkbox':
+          fieldsValue[props.fieldName] = props.initialValue;
+          break;
+        case 'Switch':
+          fieldsValue[props.fieldName] = props.initialValue;
+          break;
+        default:
+          break;
+      }
+    }
+    return fieldsValue;
   }
 
   checkVisible = config => {
@@ -540,12 +556,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderInput = config => {
-    const { label, props } = config;
+    const { type, label, props } = config;
     const { getFieldDecorator } = this.props.form;
     return (
       <FormItem label={label} key={props.fieldName}>
         {getFieldDecorator(props.fieldName as never, {
-          initialValue: props.initialValue,
+          initialValue: this.getInitialValue(type, props.fieldName, props.initialValue),
         })(
           <Input
             placeholder={props.placeholder}
@@ -557,7 +573,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderInputNumber = config => {
-    const { label, props } = config;
+    const { type, label, props } = config;
     const { getFieldDecorator } = this.props.form;
     if (!this.checkVisible(config)) {
       return null;
@@ -565,7 +581,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     return (
       <FormItem label={label} key={props.fieldName}>
         {getFieldDecorator(props.fieldName as never, {
-          initialValue: props.initialValue,
+          initialValue: this.getInitialValue(type, props.fieldName, props.initialValue),
         })(
           <InputNumber
             placeholder={props.placeholder}
@@ -577,12 +593,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderSelect = (config) => {
-    const { label, props } = config;
+    const { type, label, props } = config;
     const { getFieldDecorator } = this.props.form;
     return (
       <FormItem label={label} key={props.fieldName}>
         {getFieldDecorator(props.fieldName as never, {
-          initialValue: props.initialValue,
+          initialValue: this.getInitialValue(type, props.fieldName, props.initialValue),
         })(
           <Select
             {...(props.antdSelectProps || {})}
@@ -617,12 +633,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderOptGroupSelect = (config) => {
-    const { label, props } = config;
+    const { type, label, props } = config;
     const { getFieldDecorator } = this.props.form;
     return (
       <FormItem label={label} key={props.fieldName}>
         {getFieldDecorator(props.fieldName as never, {
-          initialValue: props.initialValue,
+          initialValue: this.getInitialValue(type, props.fieldName, props.initialValue),
         })(
           <Select
             placeholder={props.placeholder}
@@ -649,7 +665,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderSelectInput = (config) => {
-    const { label, props } = config;
+    const { type, label, props } = config;
     const { searchType, mappingType, searchValue } = props as SelectInputDecorator;
     const { getFieldDecorator } = this.props.form;
     return (
@@ -657,7 +673,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
         <Input.Group className={className('ss-input')} compact>
           <FormItem style={{ width: 100 }}>
             {getFieldDecorator(searchType.fieldName, {
-              initialValue: searchType.initialValue,
+              initialValue: this.getInitialValue(type, searchType.fieldName, searchType.initialValue),
             })(
               <Select style={{ width: 100 }}>
                 {searchType.options.map((item, index) => (
@@ -671,7 +687,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           {mappingType ?
             <FormItem style={{ width: 100 }}>
               {getFieldDecorator(mappingType.fieldName, {
-                initialValue: mappingType.initialValue,
+                initialValue: this.getInitialValue(type, mappingType.fieldName, mappingType.initialValue),
               })(
                 <Select style={{ width: 100 }}>
                   {mappingType.options.map((item, index) => (
@@ -684,7 +700,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
             </FormItem> : null}
           <FormItem>
             {getFieldDecorator(searchValue.fieldName, {
-              initialValue: searchValue.initialValue,
+              initialValue: this.getInitialValue(type, searchValue.fieldName, searchValue.initialValue),
             })(
               <Input placeholder={searchValue.placeholder || '查询关键词'} />,
             )}
@@ -724,7 +740,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderDateRange = (config) => {
-    const { label } = config;
+    const { type, label } = config;
     const props = config.props as DateRangeDecorator;
     const { getFieldDecorator } = this.props.form;
     const initialValue = props.initialValue || [null, null];
@@ -732,17 +748,26 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     const dateSelects = props.dateSelects ? props.dateSelects === true ? defaultDateSelects : props.dateSelects : false;
     return (
       <FormItem key={props.fieldsName[0]} label={label}>
-        {props.addonSelect ?
+        {props.timeZone && props.timeZone ?
           this.renderSelect({
             type: 'Select',
             label: '',
             props: {
-              ...props.addonSelect,
+              fieldName: 'timeZone',
+              initialValue: 1,
+              options: [{
+                value: 1,
+                text: '美东时间',
+              }, {
+                value: 2,
+                text: '北京时间',
+              }],
+              ...(typeof props.timeZone === 'object' ? props.timeZone : {}),
             } as BaseSelectDecorator,
           }) : null}
         <FormItem style={{ marginRight: 0 }}>
           {getFieldDecorator(props.fieldsName[0], {
-            initialValue: this.getMomentValue(initialValue[0]),
+            initialValue: this.getInitialValue(type, props.fieldsName[0], initialValue[0]),
           })(
             <DatePicker
               format={fotmat}
@@ -754,7 +779,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
         <span> - </span>
         <FormItem style={{ marginRight: 0 }}>
           {getFieldDecorator(props.fieldsName[1], {
-            initialValue: this.getMomentValue(initialValue[1]),
+            initialValue: this.getInitialValue(type, props.fieldsName[1], initialValue[1]),
           })(
             <DatePicker
               format={fotmat}
@@ -769,12 +794,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderRadio = (config) => {
-    const { label, props } = config;
+    const { type, label, props } = config;
     const { getFieldDecorator } = this.props.form;
     return (
       <FormItem label={label} key={props.fieldName}>
         {getFieldDecorator(props.fieldName as never, {
-          initialValue: props.initialValue,
+          initialValue: this.getInitialValue(type, props.fieldName, props.initialValue),
         })(
           <RadioGroup options={props.options} />,
         )}
@@ -783,12 +808,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderCheckbox = config => {
-    const { label, props } = config;
+    const { type, label, props } = config;
     const { getFieldDecorator } = this.props.form;
     return (
       <FormItem label={label} key={props.fieldName}>
         {getFieldDecorator(props.fieldName as never, {
-          initialValue: props.initialValue,
+          initialValue: this.getInitialValue(type, props.fieldName, props.initialValue),
         })(
           <AllCheckboxGroup options={props.options} />,
         )}
@@ -797,12 +822,12 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderDatePicker = (config) => {
-    const { label, props } = config;
+    const { type, label, props } = config;
     const { getFieldDecorator } = this.props.form;
     return (
       <FormItem label={label} key={props.fieldName}>
         {getFieldDecorator(props.fieldName as never, {
-          initialValue: this.getMomentValue(props.initialValue),
+          initialValue: this.getInitialValue(type, props.fieldName, props.initialValue),
         })(
           <DatePicker
             style={{ width: '100%' }}
@@ -816,7 +841,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderNumberInterval = (config) => {
-    const { label } = config;
+    const { type, label } = config;
     const props = config.props as NumberIntervalDecorator;
     const { getFieldDecorator } = this.props.form;
     const initialValue = props.initialValue || [null, null];
@@ -824,7 +849,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
       <FormItem key={props.fieldsName[0]}>
         <FormItem label={label} style={{ marginRight: 0 }}>
           {getFieldDecorator(props.fieldsName[0], {
-            initialValue: initialValue[0],
+            initialValue: this.getInitialValue(type, props.fieldsName[0], initialValue[0]),
           })(
             <InputNumber style={{ width: 100, textAlign: 'center' }} placeholder="最小值" disabled={props.disabled} />,
           )}
@@ -832,7 +857,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
         <span> - </span>
         <FormItem style={{ marginRight: 0 }}>
           {getFieldDecorator(props.fieldsName[1], {
-            initialValue: initialValue[1],
+            initialValue: this.getInitialValue(type, props.fieldsName[1], initialValue[1]),
           })(
             <InputNumber style={{ width: 100, textAlign: 'center' }} placeholder="最大值" disabled={props.disabled} />,
           )}
@@ -842,14 +867,14 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
   }
 
   renderSwitch(config) {
-    const { label } = config;
+    const { type, label } = config;
     const props = config.props as SwitchDecorator;
     const { getFieldDecorator } = this.props.form;
     return (
       <FormItem label={label} key={props.fieldName}>
         {getFieldDecorator(props.fieldName, {
           valuePropName: 'checked',
-          initialValue: props.initialValue || false,
+          initialValue: this.getInitialValue(type, props.fieldName, props.initialValue || false),
         })(
           <Switch {...(props.antdSwitchProps || {})} />,
         )}
@@ -857,17 +882,10 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     );
   }
 
-  renderFormItem() {
-    const { omitSearchsNum, omitSearchs } = this.props;
-    let advanceSearchs: AdvanceSearchDecorator[] = [...this.state.advanceSearchs];
+  renderFormItem(advanceSearchs: AdvanceSearchDecorator[]) {
     if (advanceSearchs.length === 0) {
       return null;
     }
-    // 收起的时候截取部分advanceSearchs
-    if (advanceSearchs.length > omitSearchsNum && omitSearchs && !this.state.expandForm) {
-      advanceSearchs = advanceSearchs.slice(0, omitSearchsNum);
-    }
-
     return advanceSearchs.map((config, index) => {
       let _Component;
       switch (config.type) {
@@ -915,34 +933,52 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     });
   }
 
+  getRealSearchs = () => {
+    const { omitSearchsNum } = this.props;
+    let advanceSearchs = this.state.advanceSearchs;
+    let showExpandFormToggle = false;
+    if (advanceSearchs.length > omitSearchsNum && this.props.omitSearchs && !this.state.expandForm) {
+      showExpandFormToggle = true;
+      advanceSearchs = advanceSearchs.slice(0, omitSearchsNum);
+    }
+
+    return {
+      advanceSearchs,
+      showExpandFormToggle,
+    };
+  }
+
   /**
    * 渲染表单
    */
   renderForm() {
-    const { toolbarButtons, omitSearchs, searchText = '查询' } = this.props;
-
+    const { toolbarButtons } = this.props;
+    const { advanceSearchs, showExpandFormToggle } = this.getRealSearchs();
+    const searchText = this.props.searchText ? this.props.searchText : '查询';
     return (
       <Form onSubmit={this.handleSearch} layout={'inline'}>
-        {this.renderFormItem()}
-        <FormItem>
-          <div>
-            <Button type="primary" htmlType="submit">{searchText}</Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-            {omitSearchs && this.state.advanceSearchs.length > this.props.omitSearchsNum ?
-              <a className="toogle-form" style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                {this.state.expandForm ?
-                  <>
-                    收起
-                  <Icon type="up" />
-                  </> :
-                  <>
-                    展开
-                  <Icon type="down" />
-                  </>
-                }
-              </a> : null}
-          </div>
-        </FormItem>
+        {this.renderFormItem(advanceSearchs)}
+        {!this.state.expandForm ?
+          <FormItem>
+            <div>
+              <Button type="primary" htmlType="submit">{searchText}</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
+              {showExpandFormToggle ?
+                <a className="toogle-form" style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                  展开 <Icon type="down" />
+                </a> : null}
+            </div>
+          </FormItem> : null}
+        {this.state.expandForm ?
+          <div style={{ overflow: 'hidden' }}>
+            <div style={{ float: 'right' }}>
+              <Button type="primary" htmlType="submit">{searchText}</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
+              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                收起 <Icon type="up" />
+              </a>
+            </div>
+          </div> : null}
         <div className={className('tablesearch-button')}>
           {toolbarButtons}
         </div>
@@ -962,7 +998,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
 export default Form.create<TableSearchBarProps>({
   onValuesChange(_, values, allValues) {
     if (_.onChange) {
-      _.onChange(allValues, _.form);
+      _.onChange(allValues);
     }
   },
 })(TableSearchBar) as React.ComponentClass<TableSearchBarOwnProps>;

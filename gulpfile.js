@@ -7,9 +7,9 @@ if (fs.existsSync('./lib')) {
   rimraf.sync('./lib', {});
 }
 
-gulp.task('copy', function() {
-  gulp.src(['src/**/*', '!src/site', '!src/site/**'], { base: './src' })
-  .pipe(gulp.dest('./lib'));
+gulp.task('copy', function () {
+  gulp.src(['src/**/*', '!src/site', '!src/site/**', '!src/**/Test', '!src/**/Test/**'], { base: './src' })
+    .pipe(gulp.dest('./lib'));
 });
 
 gulp.task('default', ['copy']);

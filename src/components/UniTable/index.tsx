@@ -18,6 +18,7 @@ import { createGetClassName } from '../../util/util';
 import ReactDragListView from 'react-drag-listview';
 import BasicComponent from '../BasicComponent';
 import adminEvent from '../../event';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 const getClassName = createGetClassName('unitable');
 
@@ -83,7 +84,7 @@ export interface UniTableOwnProps {
   transformQueryDataOut?: (queryData: any) => any;
   pageKeyName?: PageKeyName;
   /** fieldsValue改变的回调 */
-  onFieldsValueChange?: (fieldsValue: any) => void;
+  onFieldsValueChange?: (fieldsValue: any, form?: WrappedFormUtils) => void;
   /** fieldsValue查询的回调 */
   onFieldsValueSearch?: (fieldsValue: any) => void;
   /** fieldsValue重置的回调 */
@@ -194,10 +195,10 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
     this.getTableList(fieldsValue, 1, 10);
   }
 
-  handleChange = (fieldsValue) => {
+  handleChange = (fieldsValue, form) => {
     const { onFieldsValueChange } = this.props;
     if (onFieldsValueChange) {
-      onFieldsValueChange(fieldsValue);
+      onFieldsValueChange(fieldsValue, form);
     }
   }
 
@@ -276,7 +277,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
 
   firstLoadWithSearchs = () => {
     if ((!this.props.advanceSearchs || this.advanceSearchFirstValues)
-    && (!this.props.screenSearch || this.screenSearchFirstValues)) {
+      && (!this.props.screenSearch || this.screenSearchFirstValues)) {
       this.getTableList({
         ...this.advanceSearchFirstValues,
         ...this.screenSearchFirstValues,
@@ -314,7 +315,7 @@ export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
       marginTop: 12,
       paddingTop: 12,
     };
-    if (screenSearch) {
+    if (screenSearch.length > 0) {
       return (
         <div style={advanceSearchs.length > 0 ? style : {}}>
           <TableSearchBar
