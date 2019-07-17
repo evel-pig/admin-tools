@@ -16,7 +16,6 @@ import { ListState } from '../../model/listReducers';
 import './index.less';
 import { createGetClassName } from '../../util/util';
 import ReactDragListView from 'react-drag-listview';
-import BasicComponent from '../BasicComponent';
 import adminEvent from '../../event';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
@@ -108,6 +107,7 @@ export interface UniTableOwnProps {
   footer?: (currentPageData: Object[]) => React.ReactNode;
   /** table row key */
   rowKey?: string | ((record: any, index: number) => string);
+  dispatch?: any;
 }
 
 interface UniTableProps extends UniTableOwnProps { }
@@ -117,7 +117,7 @@ interface MyState {
   selectedRows: any[];
 }
 
-export class UniTable extends BasicComponent<UniTableProps, Partial<MyState>> {
+export class UniTable extends React.Component<UniTableProps, Partial<MyState>> {
   static pageNoKeyName = 'pageNo';
   static pageSizeKeyName = 'pageSize';
   static globalTableProps: Partial<TableProps<any>> = {};
