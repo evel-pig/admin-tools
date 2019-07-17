@@ -39,7 +39,7 @@
   "author": "infeng",
   "license": "MIT",
   "dependencies": {
-    "@epig/luna": "^1.6.2",
+    "@epig/luna": "^1.6.3",
     "@types/react-redux": "^7.1.1",
     "@types/redux-actions": "^2.2.3",
     "bluebird": "^3.5.1",
