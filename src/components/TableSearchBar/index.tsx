@@ -731,7 +731,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     const fotmat = props.format || DATE_FORMAT;
     const dateSelects = props.dateSelects ? props.dateSelects === true ? defaultDateSelects : props.dateSelects : false;
     return (
-      <FormItem key={props.fieldsName[0]} label={label}>
+      <FormItem key={props.fieldsName[0]} label={label} className={className('date-range')}>
         {props.addonSelect ?
           this.renderSelect({
             type: 'Select',
@@ -740,7 +740,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
               ...props.addonSelect,
             } as BaseSelectDecorator,
           }) : null}
-        <FormItem style={{ marginRight: 0 }}>
+        <FormItem>
           {getFieldDecorator(props.fieldsName[0], {
             initialValue: this.getMomentValue(initialValue[0]),
           })(
@@ -752,7 +752,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           )}
         </FormItem>
         <span> - </span>
-        <FormItem style={{ marginRight: 0 }}>
+        <FormItem>
           {getFieldDecorator(props.fieldsName[1], {
             initialValue: this.getMomentValue(initialValue[1]),
           })(

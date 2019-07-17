@@ -39,7 +39,6 @@ export default function Page1(props: Page1Props) {
     },
   }, {
     type: 'DateRange',
-    label: '时间选择',
     props: {
       fieldsName: ['start', 'end'],
       addonSelect: {

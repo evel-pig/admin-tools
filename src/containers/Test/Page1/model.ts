@@ -1,4 +1,4 @@
-import createModel from '@epig/luna/model';
+import { createModel } from '@epig/luna';
 import { makeListHandleActions, ListState } from '../../../model/listReducers';
 
 export interface Page1State extends ListState<any> {

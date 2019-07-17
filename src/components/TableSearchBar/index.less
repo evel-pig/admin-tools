@@ -5,31 +5,43 @@
     &.ant-input-group.ant-input-group-compact {
       display: flex;
     }
+
     .ant-form-item {
       flex-direction: row;
       margin: 0;
       vertical-align: top;
+
       &:first-child .ant-select-selection {
         border-right-width: 0;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
       }
-      &:nth-child(2) .ant-select-selection {         
+
+      &:nth-child(2) .ant-select-selection {
         border-right-width: 0;
         border-radius: 0;
       }
+
       &:last-child .ant-input {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
       }
     }
   }
-  &-tablesearch-button{
+
+  &-tablesearch-button {
     height: 40px;
     line-height: 40px;
     display: inline-block;
+
     button {
       margin-right: 8px;
+    }
+  }
+
+  &-date-range {
+    .ant-form-item {
+      margin-right: 0;
     }
   }
 }
