@@ -2,7 +2,11 @@ import * as React from 'react';
 import UniTable, {
   TableColumnConfig, ToolbarButtonDecorator,
 } from '../../../components/UniTable';
-import { AdvanceSearchDecorator, DateRangeDecorator } from '../../../components/TableSearchBar';
+import {
+  AdvanceSearchDecorator,
+  DateRangeDecorator,
+  NumberIntervalDecorator,
+} from '../../../components/TableSearchBar';
 import { DatePicker, Form } from 'antd';
 import moment from 'moment';
 import useContainer from '../../../hooks/useContainer';
@@ -41,19 +45,26 @@ export default function Page1(props: Page1Props) {
     type: 'DateRange',
     props: {
       fieldsName: ['start', 'end'],
+      initialValue: [],
+      dateSelects: true,
+    } as DateRangeDecorator,
+  }, {
+    type: 'NumberInterval',
+    label: '范围选择',
+    props: {
+      fieldsName: ['min', 'max'],
       addonSelect: {
-        fieldName: 'timezone',
+        fieldName: 'addon',
         initialValue: 1,
         options: [{
           value: 1,
-          text: '北京时间',
+          text: '选项1',
         }, {
           value: 2,
-          text: '美东时间',
+          text: '选项2',
         }],
       },
-      dateSelects: true,
-    } as DateRangeDecorator,
+    } as NumberIntervalDecorator,
   }];
 
   const columns: TableColumnConfig<any>[] = [{

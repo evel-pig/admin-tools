@@ -198,6 +198,7 @@ export interface NumberIntervalDecorator {
   initialValue: any[];
   placeholder: string[];
   disabled?: boolean;
+  addonSelect?: BaseSelectDecorator;
 }
 
 export interface OptGroupSelectDecorator extends BaseSelectDecorator {
@@ -497,7 +498,8 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           }
         }
       }
-      if (item.type === 'DateRange') {
+      //  去掉addonSelect的值;
+      if (item.type === 'DateRange' || item.type === 'NumberInterval') {
         const props = item.props as DateRangeDecorator;
         if (props.addonSelect && props.addonSelect.fieldName) {
           const fieldsNames = props.fieldsName;
@@ -731,7 +733,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     const fotmat = props.format || DATE_FORMAT;
     const dateSelects = props.dateSelects ? props.dateSelects === true ? defaultDateSelects : props.dateSelects : false;
     return (
-      <FormItem key={props.fieldsName[0]} label={label} className={className('date-range')}>
+      <FormItem key={props.fieldsName[0]} label={label} className={className('compact')}>
         {props.addonSelect ?
           this.renderSelect({
             type: 'Select',
@@ -751,7 +753,9 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
             />,
           )}
         </FormItem>
-        <span> - </span>
+        <FormItem>
+          <span> - </span>
+        </FormItem>
         <FormItem>
           {getFieldDecorator(props.fieldsName[1], {
             initialValue: this.getMomentValue(initialValue[1]),
@@ -821,16 +825,26 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
     const { getFieldDecorator } = this.props.form;
     const initialValue = props.initialValue || [null, null];
     return (
-      <FormItem key={props.fieldsName[0]}>
-        <FormItem label={label} style={{ marginRight: 0 }}>
+      <FormItem label={label} key={props.fieldsName[0]} className={className('compact')}>
+        {props.addonSelect ?
+          this.renderSelect({
+            type: 'Select',
+            label: '',
+            props: {
+              ...props.addonSelect,
+            } as BaseSelectDecorator,
+          }) : null}
+        <FormItem >
           {getFieldDecorator(props.fieldsName[0], {
             initialValue: initialValue[0],
           })(
             <InputNumber style={{ width: 100, textAlign: 'center' }} placeholder="最小值" disabled={props.disabled} />,
           )}
         </FormItem>
-        <span> - </span>
-        <FormItem style={{ marginRight: 0 }}>
+        <FormItem>
+          <span> - </span>
+        </FormItem>
+        <FormItem>
           {getFieldDecorator(props.fieldsName[1], {
             initialValue: initialValue[1],
           })(
