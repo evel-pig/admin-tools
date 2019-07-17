@@ -11,7 +11,7 @@ import TTApp, { AppOptions, AppPersistConfig, StoreConfig } from '@epig/luna';
 import { createTransform } from '@epig/luna/lib/persist';
 import DefaultLoadingComponent from './components/DefaultLoadingComponent';
 import { setDefaultLoadingComponent } from './components/DynamicComponent';
-import { ApiBasePath } from '@epig/luna/lib/model/initApi';
+import { ApiPath } from '@epig/luna/lib/model/apiHelper';
 
 const apiReg = {
   api: /^api-/,
@@ -155,7 +155,7 @@ export interface TTAppModelOptions {
   noCommonModels?: boolean;
   message?: any;
   syncModels?: {reducers: any; sagas: any};
-  basePath?: ApiBasePath;
+  basePath?: ApiPath;
 }
 
 export interface TTAdminAppOptions {

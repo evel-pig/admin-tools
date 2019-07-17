@@ -2,7 +2,7 @@ import { Button, Modal } from 'antd';
 import classnames from 'classnames';
 import * as React from 'react';
 import menuModel, { BackComponentDecorator, MenuState, MenuDecorator } from '../commonModels/menu';
-import DynamicComponent from '@epig/luna/DynamicComponent';
+import { DynamicComponent } from '@epig/luna';
 import LayoutComponent, { LayoutComponentProps } from '../components/LayoutComponent';
 import Tab from '../components/Tab';
 import Exception404 from '../containers/Exception/404';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NormalComponentProps } from '@epig/luna/connect';
+import { NormalComponentProps } from '@epig/luna/lib/connect';
 import { RouteProps, LayoutProps } from '../../router';
 
 export interface LayoutComponentProps extends NormalComponentProps, RouteProps, LayoutProps {
