@@ -21,6 +21,8 @@ export default function Page1(props: Page1Props) {
 
   const { push } = useContainer();
 
+  const [options, setOptions] = React.useState([]);
+
   const searchs1: AdvanceSearchDecorator[] = [{
     type: 'Input',
     props: {
@@ -55,14 +57,7 @@ export default function Page1(props: Page1Props) {
       fieldsName: ['min', 'max'],
       addonSelect: {
         fieldName: 'addon',
-        initialValue: 1,
-        options: [{
-          value: 1,
-          text: '选项1',
-        }, {
-          value: 2,
-          text: '选项2',
-        }],
+        options: options,
       },
     } as NumberIntervalDecorator,
   }];
@@ -82,6 +77,19 @@ export default function Page1(props: Page1Props) {
       }, null);
     },
     text: '新增',
+  }, {
+    key: 'set',
+    type: 'primary',
+    onClick: () => {
+      setOptions([{
+        value: 1,
+        text: '选项1',
+      }, {
+        value: 2,
+        text: '选项2',
+      }]);
+    },
+    text: 'set options',
   }];
 
   return (

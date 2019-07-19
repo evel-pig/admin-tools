@@ -374,10 +374,6 @@ function getAdvanceSearchs(basicSearchs, advanceSearchs) {
 
 class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarState> {
   static getDerivedStateFromProps(nextProps: TableSearchBarProps, prevState: any) {
-    if (prevState.expandForm === false) {
-      return null;
-    }
-
     const { momentField, advanceSearchs } = getAdvanceSearchs(nextProps.basicSearchs, nextProps.advanceSearchs);
 
     return {
