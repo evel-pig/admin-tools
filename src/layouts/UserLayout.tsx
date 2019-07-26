@@ -6,6 +6,7 @@ import LayoutComponent from '../components/LayoutComponent';
 import DocumentTitle from 'react-document-title';
 import { createGetClassName } from '../util/util';
 import { DynamicComponent } from '@epig/luna';
+import moment from 'moment';
 
 const getClassName = createGetClassName('user-layout');
 
@@ -22,6 +23,8 @@ export default class UserLayout extends LayoutComponent<UserLayoutProps, any> {
   }
 
   render() {
+    const currentYear = moment().format('YYYY');
+
     return (
       <DocumentTitle title={this.getPageTitle()}>
         <div className={getClassName('container')}>
@@ -51,7 +54,7 @@ export default class UserLayout extends LayoutComponent<UserLayoutProps, any> {
           }
           <Footer
             className={getClassName('footer')}
-            copyright={`2018 ${this.props.app.appName}`}
+            copyright={`${currentYear} ${this.props.app.appName}`}
           />
         </div>
       </DocumentTitle>
