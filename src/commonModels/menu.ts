@@ -33,6 +33,7 @@ export interface BackComponentDecorator {
   options?: any;
   onClick?: () => void;
   backComponent?: BackComponentDecorator;
+  id: any;
 }
 
 interface PaneConfig {
@@ -42,6 +43,7 @@ interface PaneConfig {
   options?: any;
   backComponent: BackComponentDecorator;
   originComponentName: string;
+  id: string;
 }
 
 export interface UpdatePaneModalConfig {
@@ -188,6 +190,7 @@ const model = createModel({
             key: activePath,
             backComponent: null,
             originComponentName: componentName,
+            id: getPaneId(),
           };
           if (state.multipleTab) {
             paneConfigs = paneConfigs.concat(newPaneConfig);
@@ -232,7 +235,8 @@ const model = createModel({
         }
         for (let i = 0; i < paneConfigs.length; i++) {
           if (paneConfigs[i].key === activePath) {
-            paneConfigs[i].componentName = '';
+            // paneConfigs[i].componentName = '';
+            paneConfigs[i].id = getPaneId();
           }
         }
 
@@ -252,6 +256,7 @@ const model = createModel({
             paneConfigs[i].componentName = newComponentName;
             if (options) {
               paneConfigs[i].options = options;
+              paneConfigs[i].id = getPaneId();
             }
           }
         }
@@ -326,6 +331,7 @@ const model = createModel({
                     ...item,
                     ...(action.payload.backComponent || {}),
                   },
+                  id: getPaneId(),
                 };
               case 'modal':
                 modalPaneConfig = {
@@ -387,6 +393,7 @@ const model = createModel({
                 componentName: item.backComponent.componentName,
                 options: item.backComponent.options,
                 backComponent: origin ? null : item.backComponent.backComponent,
+                id: getPaneId(),
               };
             }
             return item;
@@ -541,6 +548,10 @@ const model = createModel({
     ];
   },
 });
+
+function getPaneId() {
+  return Math.random().toString(36).substr(2);
+}
 
 export type UpdatePaneMode = 'default' | 'modal';
 

@@ -27,6 +27,7 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
     contentNode: React.ReactNode;
     isActive: boolean;
     componentName: string;
+    id: string;
   }[];
   models: any;
 
@@ -265,7 +266,7 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
           isNew = true;
         } else {
           if (pane[0].key) {
-            if (pane[0].componentName !== paneConfig.componentName) {
+            if (pane[0].id !== paneConfig.id) {
               isNew = true;
             }
           } else {
@@ -278,7 +279,11 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
 
         if (isNew || window['hotReload']) {
           newPanes.push(getTabPane(
-            paneConfig.key, ComponentNode, paneConfig.key === activePath, paneConfig.componentName,
+            paneConfig.key,
+            ComponentNode,
+            paneConfig.key === activePath,
+            paneConfig.componentName,
+            paneConfig.id,
           ));
         } else {
           newPanes.push({
@@ -343,7 +348,7 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
                       [getClassName('content-item-active')]: item.isActive,
                       [getClassName('content-item-inactive')]: !item.isActive,
                     })}
-                    key={item.key}
+                    key={item.id}
                   >
                     {item.contentNode}
                   </div>
@@ -404,11 +409,12 @@ export default connect({
   'data': 'menu',
 })(EnhanceTab);
 
-let getTabPane = (key, contentNode, isActive: boolean, componentName) => {
+let getTabPane = (key, contentNode, isActive: boolean, componentName, id) => {
   return {
     key,
     contentNode,
     isActive,
     componentName,
+    id: id,
   };
 };
