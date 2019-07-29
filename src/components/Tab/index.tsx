@@ -111,6 +111,10 @@ export default class Tab extends React.Component<TabProps, Partial<MyState>> {
 
   update = () => {
     this.updateScrollVisible();
+    /** warn: Uncaught TypeError: Cannot read property 'childNodes' of null */
+    if (this.tabNav === null) {
+      return;
+    }
     for (let i = 0; i < this.tabNav.childNodes.length; i++) {
       this.scrollActiveTab();
     }
