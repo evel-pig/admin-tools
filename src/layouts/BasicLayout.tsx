@@ -63,6 +63,7 @@ export class BasicLayout extends LayoutComponent<BasicLayoutProps, any> {
       margin: '4px 0',
       height: '100%',
       position: 'relative',
+      minWidth: '1280px',
     };
 
     const passProps = {
