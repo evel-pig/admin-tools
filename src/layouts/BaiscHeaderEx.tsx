@@ -7,7 +7,7 @@ import menuModel, { MenuState } from '../commonModels/menu';
 import 'moment/locale/zh-cn';
 import classnames from 'classnames';
 import settingModel from '../commonModels/setting';
-import { createGetClassName } from '../util/util';
+import { createGetClassName, history } from '../util/util';
 import BasicComponent from '../components/BasicComponent';
 import Debounce from 'lodash-decorators/debounce';
 
@@ -69,6 +69,15 @@ export class BaiscHeaderEx extends BasicComponent<BaiscHeaderExProps, any> {
     this.triggerResizeEvent();
   }
 
+  logout = () => {
+    this.props.dispatch(loginModel.actions.api.logout({
+    }));
+  }
+
+  editPassword = () => {
+    history.push('/system/editPassword');
+  }
+
   render() {
     const customMenuItems = Object.keys(this.props.headerMenuItems).map(key => {
       return this.props.headerMenuItems[key].render;
@@ -105,6 +114,10 @@ export class BaiscHeaderEx extends BasicComponent<BaiscHeaderExProps, any> {
               {this.props.menu.name}
             </span>
           </Dropdown>
+          <span className={`${'setting'}`} onClick={this.editPassword}>修改密码</span>
+          <span className={`${'setting'}`} onClick={this.logout}>
+            退出账号
+          </span>
         </div>
       </Header>
     );
