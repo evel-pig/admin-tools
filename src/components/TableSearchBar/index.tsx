@@ -144,7 +144,7 @@ export interface BaseInputDecorator {
   placeholder?: string;
 }
 
-export interface DateRangeDecorator extends CommonSearchPropsDecorator {
+export interface DateRangeDecorator {
   fieldsName: string[];
   initialValue?: moment.Moment[];
   placeholder?: string[];
