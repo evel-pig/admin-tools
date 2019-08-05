@@ -1,4 +1,4 @@
-import { Layout, LocaleProvider } from 'antd';
+import { Layout, LocaleProvider, Menu, Icon } from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
 import * as React from 'react';
@@ -13,7 +13,7 @@ import { connect } from '../util/inject';
 import { createGetClassName } from '../util/util';
 import './BasicLayout.less';
 import EnhanceTab from './EnhanceTab';
-import BaiscHeaderEx, { HeaderMenuItems } from './BaiscHeaderEx';
+import BaiscHeaderEx, { HeaderMenuItems, RightMenuItems } from './BaiscHeaderEx';
 import Setting from './Setting';
 import BasicSiderMenu from './BasicSiderMenu';
 import moment from 'moment';
@@ -24,6 +24,7 @@ const Content = Layout.Content;
 
 export interface BasicLayoutOwnProps {
   headerMenuItems?: HeaderMenuItems;
+  rightMenuItems?: RightMenuItems;
 }
 
 export interface BasicLayoutProps extends BasicLayoutOwnProps {
@@ -34,7 +35,15 @@ export interface BasicLayoutProps extends BasicLayoutOwnProps {
 export class BasicLayout extends LayoutComponent<BasicLayoutProps, any> {
   static appName = '';
   static defaultProps: Partial<BasicLayoutProps> = {
-    headerMenuItems: {},
+    headerMenuItems: {
+       setting: {
+        render: <Menu.Item key="setting"><Icon type="setting" />设置</Menu.Item>,
+      },
+      logout: {
+        render: <Menu.Item key="logout"><Icon type="logout" />退出登录</Menu.Item>,
+      },
+    },
+    rightMenuItems: {},
   };
 
   constructor(props) {
@@ -63,7 +72,6 @@ export class BasicLayout extends LayoutComponent<BasicLayoutProps, any> {
       margin: '4px 0',
       height: '100%',
       position: 'relative',
-      minWidth: '1280px',
     };
 
     const passProps = {
@@ -91,6 +99,7 @@ export class BasicLayout extends LayoutComponent<BasicLayoutProps, any> {
             <Layout className={getClassName('mainLayout')}>
               <BaiscHeaderEx
                 headerMenuItems={this.props.headerMenuItems}
+                rightMenuItems={this.props.rightMenuItems}
               />
               <Content style={contentStyle}>
                 <Setting />

@@ -7,7 +7,7 @@ import menuModel, { MenuState } from '../commonModels/menu';
 import 'moment/locale/zh-cn';
 import classnames from 'classnames';
 import settingModel from '../commonModels/setting';
-import { createGetClassName, history } from '../util/util';
+import { createGetClassName } from '../util/util';
 import BasicComponent from '../components/BasicComponent';
 import Debounce from 'lodash-decorators/debounce';
 
@@ -17,13 +17,16 @@ const Header = Layout.Header;
 
 export interface HeaderMenuItem {
   render: React.ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export type HeaderMenuItems = {[key: string]: HeaderMenuItem};
 
+export type RightMenuItems = HeaderMenuItems;
+
 export interface BaiscHeaderExOwnProps {
   headerMenuItems: HeaderMenuItems;
+  rightMenuItems: RightMenuItems;
 }
 
 export interface BaiscHeaderExProps extends BaiscHeaderExOwnProps {
@@ -49,8 +52,9 @@ export class BaiscHeaderEx extends BasicComponent<BaiscHeaderExProps, any> {
       default:
         break;
     }
-    if (this.props.headerMenuItems[e.key]) {
-      this.props.headerMenuItems[e.key].onClick();
+    const eKey = this.props.headerMenuItems[e.key];
+    if (eKey && eKey.onClick) {
+      eKey.onClick();
     }
   }
 
@@ -69,25 +73,17 @@ export class BaiscHeaderEx extends BasicComponent<BaiscHeaderExProps, any> {
     this.triggerResizeEvent();
   }
 
-  logout = () => {
-    this.props.dispatch(loginModel.actions.api.logout({
-    }));
-  }
-
-  editPassword = () => {
-    history.push('/system/editPassword');
-  }
-
   render() {
-    const customMenuItems = Object.keys(this.props.headerMenuItems).map(key => {
+    const headerMenuItems = Object.keys(this.props.headerMenuItems);
+    const customMenuItems = headerMenuItems.map(key => {
       return this.props.headerMenuItems[key].render;
     });
     const menu = (
       <Menu selectedKeys={[]} onClick={this.handleClickMenu}>
         {customMenuItems}
-        <Menu.Item key="setting"><Icon type="setting" />设置</Menu.Item>
+        {/** <Menu.Item key="setting"><Icon type="setting" />设置</Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="logout"><Icon type={this.props.login.loading ? 'loading' : 'logout'} />退出登录</Menu.Item>
+        <Menu.Item key="logout"><Icon type={this.props.login.loading ? 'loading' : 'logout'} />退出登录</Menu.Item>*/}
       </Menu>
     );
 
@@ -95,7 +91,9 @@ export class BaiscHeaderEx extends BasicComponent<BaiscHeaderExProps, any> {
       getClassName('header'),
       this.props.menu.previewHeaderTheme || this.props.menu.headerTheme.value,
     );
-
+    const customRightMenuItems = Object.keys(this.props.rightMenuItems).map(key => {
+      return this.props.rightMenuItems[key].render;
+    });
     return (
       <Header className={headerClass}>
         <Icon
@@ -114,10 +112,7 @@ export class BaiscHeaderEx extends BasicComponent<BaiscHeaderExProps, any> {
               {this.props.menu.name}
             </span>
           </Dropdown>
-          <span className={`${'setting'}`} onClick={this.editPassword}>修改密码</span>
-          <span className={`${'setting'}`} onClick={this.logout}>
-            退出账号
-          </span>
+          {customRightMenuItems}
         </div>
       </Header>
     );
