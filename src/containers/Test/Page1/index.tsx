@@ -47,7 +47,6 @@ export default function Page1(props: Page1Props) {
     type: 'DateRange',
     props: {
       fieldsName: ['start', 'end'],
-      initialValue: [],
       dateSelects: true,
     } as DateRangeDecorator,
   }, {
@@ -58,6 +57,7 @@ export default function Page1(props: Page1Props) {
       addonSelect: {
         fieldName: 'addon',
         options: options,
+        placeholder: '请选择',
       },
     } as NumberIntervalDecorator,
   }];

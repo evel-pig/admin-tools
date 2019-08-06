@@ -129,6 +129,7 @@ export interface InputNumberDecorator extends CommonSearchPropsDecorator {
 export interface BaseSelectDecorator extends CommonSearchPropsDecorator {
   initialValue?: number | string;
   options: BasicOptionsDecorator[];
+  placeholder?: string;
   allowClear?: boolean;
   mode?: 'multiple' | 'tags' | 'combobox';
   disabled?: boolean;
@@ -189,14 +190,14 @@ export interface CheckboxDecorator {
 export interface DatePickerDecorator {
   fieldName: string;
   initialValue: moment.Moment;
-  placeholder: string;
+  placeholder?: string;
   format?: string;
 }
 
 export interface NumberIntervalDecorator {
   fieldsName: string[];
   initialValue: any[];
-  placeholder: string[];
+  placeholder?: string[];
   disabled?: boolean;
   addonSelect?: BaseSelectDecorator;
 }
