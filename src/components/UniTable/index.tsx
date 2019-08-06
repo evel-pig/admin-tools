@@ -108,6 +108,8 @@ export interface UniTableOwnProps {
   /** table row key */
   rowKey?: string | ((record: any, index: number) => string);
   dispatch?: any;
+  /** table props */
+  tableProps?: Partial<TableProps<any>>;
 }
 
 interface UniTableProps extends UniTableOwnProps { }
@@ -142,6 +144,7 @@ export class UniTable extends React.Component<UniTableProps, Partial<MyState>> {
     expandIcon: () => false,
     expandedRowKeys: [],
     buttonsDirection: 'bottom',
+    tableProps: {},
   };
 
   unsubscribeRefreshUniTable = null;
@@ -389,6 +392,7 @@ export class UniTable extends React.Component<UniTableProps, Partial<MyState>> {
         {this.renderTable(
           <Table
             {...UniTable.globalTableProps}
+            {...this.props.tableProps}
             columns={columns}
             rowKey={this.getRowkey()}
             dataSource={tableState.infos}
