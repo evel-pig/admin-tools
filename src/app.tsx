@@ -158,6 +158,13 @@ export interface TTAppModelOptions {
   basePath?: ApiPath;
 }
 
+export interface CommonContainers {
+  [key: string]: {
+    component: any;
+    models: any[];
+  };
+}
+
 export interface TTAdminAppOptions {
   persistConfig?: AppPersistConfig;
   model?: TTAppModelOptions;
@@ -191,6 +198,10 @@ export interface TTAdminAppOptions {
   checkPermission?: boolean;
   navDataOptions?: GetNavDataOptions;
   getOperatorInfoConfig?: GetOperatorInfoConfig;
+  /**
+   * 公共容器，用于多个容器用到同一个子容器的情况
+   */
+  commonContainers?: CommonContainers;
 }
 
 const DEFAULT_TTADMINAPP_OPTIONS: TTAdminAppOptions = {
@@ -205,6 +216,7 @@ export default class TTAdminApp {
   appName: string;
   noRequestMenu: boolean;
   checkPermission: boolean;
+  commonContainers: CommonContainers;
   private _nav: NavData[];
   private _routes: () => any[];
   private _getNavData: any;
@@ -290,6 +302,7 @@ export default class TTAdminApp {
     this.appName = options.appName;
     this.noRequestMenu = options.noRequestMenu;
     this.checkPermission = options.checkPermission;
+    this.commonContainers = options.commonContainers || {};
 
     setDefaultLoadingComponent(() => options.DynamicDefaultLoadingComponent );
   }

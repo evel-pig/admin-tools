@@ -96,6 +96,15 @@ export default function Page1(props: Page1Props) {
     onClick: () => {},
     disabled: true,
     text: 'disabled',
+  }, {
+    key: 'goCommonContainers',
+    type: 'primary',
+    onClick: () => {
+      push({
+        componentName: 'TInfo',
+      }, {});
+    },
+    text: 'go common containers',
   }];
 
   return (

@@ -37,11 +37,19 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
     this.panes = [];
     this.models = {};
 
+    this.loadCommonContainers();
     if (props.app.noRequestMenu) {
       this.beforeUpdatePaneConfig(props).then(() => {
         this.updatePaneConfig(props.location.pathname, props);
       });
     }
+  }
+
+  loadCommonContainers() {
+    this.models = {
+      ...this.models,
+      ...this.props.app.commonContainers,
+    };
   }
 
   componentDidUpdate(prevProps: any, prevState) {

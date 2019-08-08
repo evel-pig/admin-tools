@@ -33,6 +33,15 @@ const app = new App({
       };
     },
   },
+  commonContainers: {
+    TInfo: {
+      component: () => import (/* webpackChunkName: 'cContainers' */
+      '../commonContainers/TInfo'),
+      models: [
+        require('../commonContainers/TInfo/model'),
+      ],
+    },
+  },
 });
 
 app.start('root');
