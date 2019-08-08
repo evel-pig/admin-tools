@@ -1,4 +1,7 @@
 var config = {
+  'POST /test': {
+    status: 0,
+  },
   'POST /system/login': {
     status: 0,
     data: {

@@ -1,5 +1,4 @@
 import { getComponentName, history } from '../util/util';
-import { delay } from 'redux-saga';
 import { take, put, select } from 'redux-saga/effects';
 import loginModel from './login';
 import { adminNormalActions } from '../util/util';
@@ -117,12 +116,12 @@ const model = createModel({
   modelName: 'menu',
   action: {
     simple: {
+      updatePane: 'updatePane',
       changeSubMenu: 'changeSubMenu',
       activePane: 'activePane',
       pushPane: 'pushPane',
       popPane: 'popPane',
       refreshPane: 'refreshPane',
-      refreshPaneEnd: 'refreshPaneEnd',
       removeOtherPanes: 'removeOtherPanes',
       setException: 'setException',
       previewHeaderTheme: 'previewHeaderTheme',
@@ -190,7 +189,7 @@ const model = createModel({
             key: activePath,
             backComponent: null,
             originComponentName: componentName,
-            id: getPaneId(),
+            id: action.payload.id,
           };
           if (state.multipleTab) {
             paneConfigs = paneConfigs.concat(newPaneConfig);
@@ -233,37 +232,16 @@ const model = createModel({
         if (activePath === '') {
           return state;
         }
-        for (let i = 0; i < paneConfigs.length; i++) {
-          if (paneConfigs[i].key === activePath) {
-            // paneConfigs[i].componentName = '';
-            paneConfigs[i].id = getPaneId();
-          }
-        }
+        const newPaneConfigs = paneConfigs.map(item => {
+          return {
+            ...item,
+            id: item.key === activePath ? action.payload.id : item.id,
+          };
+        });
 
         return {
           ...state,
-          paneConfigs: paneConfigs,
-        };
-      },
-      [simpleActionNames.refreshPaneEnd](state, action) {
-        const { activePath, paneConfigs } = state;
-        if (activePath === '') {
-          return state;
-        }
-        const { newComponentName, options } = action.payload;
-        for (let i = 0; i < paneConfigs.length; i++) {
-          if (paneConfigs[i].key === activePath) {
-            paneConfigs[i].componentName = newComponentName;
-            if (options) {
-              paneConfigs[i].options = options;
-              paneConfigs[i].id = getPaneId();
-            }
-          }
-        }
-
-        return {
-          ...state,
-          paneConfigs: paneConfigs,
+          paneConfigs: newPaneConfigs,
         };
       },
       [apiActionNames.getOperatorInfo.request](state, action) {
@@ -309,7 +287,7 @@ const model = createModel({
           avatar: '',
         };
       },
-      [normalActions.redirect as any](state, action) {
+      [simpleActionNames.updatePane](state, action) {
         let { activePath } = state;
         const mode: UpdatePaneMode = action.payload.mode || 'default';
         let componentName = getComponentName(action.payload.componentName);
@@ -331,7 +309,7 @@ const model = createModel({
                     ...item,
                     ...(action.payload.backComponent || {}),
                   },
-                  id: getPaneId(),
+                  id: action.payload.id,
                 };
               case 'modal':
                 modalPaneConfig = {
@@ -393,7 +371,7 @@ const model = createModel({
                 componentName: item.backComponent.componentName,
                 options: item.backComponent.options,
                 backComponent: origin ? null : item.backComponent.backComponent,
-                id: getPaneId(),
+                id: item.backComponent.id,
               };
             }
             return item;
@@ -505,13 +483,12 @@ const model = createModel({
     });
   },
   sagas: ({ actionNames, actions }) => {
-    function* refreshTabPane() {
+    function* redirect() {
       while (true) {
-        const req: any = yield take(actionNames.simple.refreshPane);
-        yield delay(100);
-        yield put(actions.simple.refreshPaneEnd({
-          newComponentName: req.payload.newComponentName,
-          options: req.payload.options || null,
+        const r = yield take(normalActions.redirect);
+        yield put(actions.simple.updatePane({
+          ...r.payload,
+          id: getPaneId(),
         }));
       }
     }
@@ -526,6 +503,7 @@ const model = createModel({
           }));
           yield put(actions.simple.refreshPane({
             newComponentName: payload.component.componentName,
+            id: getPaneId(),
           }));
         }
       }
@@ -542,14 +520,14 @@ const model = createModel({
     }
 
     return [
-      refreshTabPane,
+      redirect,
       handleGoTab,
       handleCancelModal,
     ];
   },
 });
 
-function getPaneId() {
+export function getPaneId() {
   return Math.random().toString(36).substr(2);
 }
 
@@ -563,9 +541,10 @@ export interface UpdatePanePayload {
 }
 
 export function updatePane(payload: UpdatePanePayload, options = null) {
-  window['store'].dispatch(normalActions.redirect({
+  window['store'].dispatch(model.actions.simple.updatePane({
     ...payload,
     options,
+    id: getPaneId(),
   }));
 }
 

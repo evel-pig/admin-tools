@@ -1,7 +1,7 @@
 import { Button, Modal } from 'antd';
 import classnames from 'classnames';
 import * as React from 'react';
-import menuModel, { BackComponentDecorator, MenuState, MenuDecorator } from '../commonModels/menu';
+import menuModel, { BackComponentDecorator, MenuState, MenuDecorator, getPaneId } from '../commonModels/menu';
 import { DynamicComponent } from '@epig/luna';
 import LayoutComponent, { LayoutComponentProps } from '../components/LayoutComponent';
 import Tab from '../components/Tab';
@@ -157,6 +157,7 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
       activePath: pathname,
       title: item.text,
       activeSubMenu: subMenuName,
+      id: getPaneId(),
     }));
   }
 
@@ -209,6 +210,7 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
     this.props.dispatch(menuModel.actions.simple.refreshPane({
       loading: true,
       newComponentName: oldComponentName,
+      id: getPaneId(),
     }));
   }
 

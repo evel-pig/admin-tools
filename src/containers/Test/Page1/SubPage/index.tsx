@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { Button } from 'antd';
 import useContainer from '../../../../hooks/useContainer';
+import subPageModel from './model';
 
 export interface AppProps {
   options?: {
     name: string;
   };
+  subPageActions: typeof subPageModel.actions;
 }
 
 export default function App(props: AppProps) {
-  const { push } = useContainer();
+  const { push, dispatch } = useContainer();
 
   return (
     <div>
@@ -24,6 +26,13 @@ export default function App(props: AppProps) {
         }}
       >
         go next sub page
+      </Button>
+      <Button
+        onClick={() => {
+          dispatch(props.subPageActions.api.test({}));
+        }}
+      >
+        redirect
       </Button>
     </div>
   );

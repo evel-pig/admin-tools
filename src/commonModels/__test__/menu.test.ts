@@ -1,4 +1,4 @@
-import menuModel from '../menu';
+import menuModel, { getPaneId } from '../menu';
 import normalActions from '@epig/luna/lib/model/normalActions';
 import TestReducer from '../../../tests/TestReducer';
 
@@ -41,30 +41,35 @@ describe('menu model', () => {
   });
 
   it('add tab success', () => {
+    const id = getPaneId();
     reducer.start()(addTab({
       activePath: '/system/operatorList',
       title: '用户管理',
       activeSubMenu: 'system',
+      id: id,
     }));
     expect(reducer.getState())
     .toEqual(getState({
       activeSubMenu: ['system'],
       activePath: '/system/operatorList',
-      paneConfigs: [expect.objectContaining({
+      paneConfigs: [{
         componentName: 'OperatorList',
         tab: '用户管理',
         key: '/system/operatorList',
         backComponent: null,
         originComponentName: 'OperatorList',
-      })],
+        id: id,
+      }],
     }));
   });
 
   it('remove tab success', () => {
+    const id = getPaneId();
     reducer.start()(addTab({
       activePath: '/system/operatorList',
       title: '用户管理',
       activeSubMenu: 'system',
+      id: id,
     }))(menuModel.actions.simple.popPane({
       key: '/system/operatorList',
       activePath: '/',
@@ -77,6 +82,7 @@ describe('menu model', () => {
   });
 
   it('remove other tab success', () => {
+    const id = getPaneId();
     reducer.start()(addTab({
       activePath: '/system/operatorList',
       title: '用户管理',
@@ -85,17 +91,19 @@ describe('menu model', () => {
       activePath: '/system/editPassword',
       title: '修改密码',
       activeSubMenu: 'system',
+      id: id,
     }))(menuModel.actions.simple.removeOtherPanes({}));
     expect(reducer.getState()).toEqual(getState({
       activeSubMenu: ['system'],
       activePath: '/system/editPassword',
-      paneConfigs: [expect.objectContaining({
+      paneConfigs: [{
         componentName: 'EditPassword',
         tab: '修改密码',
         key: '/system/editPassword',
         backComponent: null,
         originComponentName: 'EditPassword',
-      })],
+        id: id,
+      }],
     }));
   });
 
@@ -104,7 +112,7 @@ describe('menu model', () => {
       activePath: '/system/operatorList',
       title: '用户管理',
       activeSubMenu: 'system',
-    }))(normalActions.redirect({
+    }))(menuModel.actions.simple.updatePane({
       componentName: 'EditOperator',
       options: {
         id: 1,
@@ -122,15 +130,16 @@ describe('menu model', () => {
       activePath: '/system/operatorList',
       title: '用户管理',
       activeSubMenu: 'system',
+      id: getPaneId(),
     }));
     const id = reducer.getState().paneConfigs[0].id;
-    t(normalActions.redirect({
+    t(menuModel.actions.simple.updatePane({
       componentName: 'OperatorList',
       options: {
         id: 1,
       },
+      id: getPaneId(),
     }));
-    const targetPaneConfig = reducer.getState().paneConfigs[0];
     expect(reducer.getState().paneConfigs[0].id).not.toBe(id);
   });
 
@@ -139,12 +148,12 @@ describe('menu model', () => {
       activePath: '/system/operatorList',
       title: '用户管理',
       activeSubMenu: 'system',
-    }))(normalActions.redirect({
+    }))(menuModel.actions.simple.updatePane({
       componentName: 'EditOperator',
       options: {
         id: 1,
       },
-    }))(normalActions.redirect({
+    }))(menuModel.actions.simple.updatePane({
       componentName: 'EditOperator2',
       options: {
         id: 2,
@@ -163,13 +172,14 @@ describe('menu model', () => {
       activePath: '/system/operatorList',
       title: '用户管理',
       activeSubMenu: 'system',
-    }))(normalActions.redirect({
+    }))(menuModel.actions.simple.updatePane({
       componentName: 'EditOperator',
       options: {
         id: 1,
         load: true,
       },
-    }))(normalActions.redirect({
+      id: getPaneId(),
+    }))(menuModel.actions.simple.updatePane({
       componentName: 'EditOperator2',
       backComponent: {
         options: {
@@ -177,6 +187,7 @@ describe('menu model', () => {
           load: false,
         },
       },
+      id: getPaneId(),
     }))(menuModel.actions.simple.back());
     expect(reducer.getState().paneConfigs[0].options).toEqual({
       id: 1,
@@ -191,42 +202,48 @@ describe('menu model', () => {
     expect(reducer.getState())
     .toEqual(getState({ multipleTab: false }));
 
+    const id = getPaneId();
     reducer.dispatchAction(addTab({
       activePath: '/system/operatorList',
       title: '用户管理',
       activeSubMenu: 'system',
+      id: id,
     }));
     expect(reducer.getState())
     .toEqual(getState({
       multipleTab: false,
       activeSubMenu: ['system'],
       activePath: '/system/operatorList',
-      paneConfigs: [expect.objectContaining({
+      paneConfigs: [{
         componentName: 'OperatorList',
         tab: '用户管理',
         key: '/system/operatorList',
         backComponent: null,
         originComponentName: 'OperatorList',
-      })],
+        id: id,
+      }],
     }));
 
+    const id2 = getPaneId();
     reducer.dispatchAction(addTab({
       activePath: '/system/editPassword',
       title: '修改密码',
       activeSubMenu: 'system',
+      id: id2,
     }));
     expect(reducer.getState())
     .toEqual(getState({
       multipleTab: false,
       activeSubMenu: ['system'],
       activePath: '/system/editPassword',
-      paneConfigs: [expect.objectContaining({
+      paneConfigs: [{
         componentName: 'EditPassword',
         tab: '修改密码',
         key: '/system/editPassword',
         backComponent: null,
         originComponentName: 'EditPassword',
-      })],
+        id: id2,
+      }],
     }));
   });
 });
