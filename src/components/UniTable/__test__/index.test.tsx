@@ -308,4 +308,19 @@ describe('UniTable', () => {
     }));
   });
 
+  it('toolbarButtons disabled', () => {
+    let uniTable = createUniTable({
+      toolbarButtons: [{
+        key: 'plus',
+        icon: 'plus',
+        type: 'primary',
+        onClick: () => { },
+        text: '新增',
+        disabled: true,
+      }],
+    });
+
+    const wrapper = mount(uniTable);
+    expect(wrapper.find(Button).at(0).props().disabled).toBe(true);
+  });
 });

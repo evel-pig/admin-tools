@@ -260,7 +260,7 @@ export class UniTable extends React.Component<UniTableProps, Partial<MyState>> {
               selectedRows: [],
             });
           }}
-          disabled={enableForAll ? false : this.state.selectedRowKeys.length === 0}
+          disabled={(enableForAll ? false : this.state.selectedRowKeys.length === 0) || item.disabled}
         >
           {item.text}
         </Button>

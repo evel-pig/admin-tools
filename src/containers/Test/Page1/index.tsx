@@ -90,6 +90,12 @@ export default function Page1(props: Page1Props) {
       }]);
     },
     text: 'set options',
+  }, {
+    key: 'disabled',
+    type: 'default',
+    onClick: () => {},
+    disabled: true,
+    text: 'disabled',
   }];
 
   return (
