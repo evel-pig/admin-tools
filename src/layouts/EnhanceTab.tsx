@@ -48,7 +48,7 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
   loadCommonContainers() {
     this.models = {
       ...this.models,
-      ...this.props.app.commonContainers,
+      ...this.props.app.commonContainers(),
     };
   }
 
@@ -317,9 +317,6 @@ class EnhanceTab extends LayoutComponent<EnhanceTabProps, any> {
       tabs = tabs.filter(tab => tab.key === this.props.data.activePath);
     }
 
-    // if (window['hotReload']) {
-    //   window['hotReload'] = false;
-    // }
     this.panes = newPanes;
     if (this.panes.length > 0) {
       let backButton = null;

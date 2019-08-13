@@ -33,15 +33,22 @@ const app = new App({
       };
     },
   },
-  commonContainers: {
-    TInfo: {
-      component: () => import (/* webpackChunkName: 'cContainers' */
-      '../commonContainers/TInfo'),
-      models: [
-        require('../commonContainers/TInfo/model'),
-      ],
-    },
-  },
+  commonContainers: () => require('./commonContainers'),
 });
 
 app.start('root');
+
+declare const module: any;
+if (module.hot) {
+  module.hot.accept('../.admin-tools/router', () => {
+    // 当window['hotReload'] = true，不使用缓存的组件，达到热加载的效果
+    window['hotReloadLayout'] = true;
+    window['hotReload'] = true;
+    app.start('root');
+  });
+  module.hot.accept('./commonContainers', () => {
+    // 当window['hotReload'] = true，不使用缓存的组件，达到热加载的效果
+    window['hotReload'] = true;
+    app.start('root');
+  });
+}
