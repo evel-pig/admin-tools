@@ -60,6 +60,19 @@ export default function Page1(props: Page1Props) {
         placeholder: '请选择',
       },
     } as NumberIntervalDecorator,
+  }, {
+    type: 'Select',
+    label: '状态',
+    props: {
+      fieldName: 'status',
+      options: [{
+        value: 1,
+        text: '1',
+      }, {
+        value: 2,
+        text: '2',
+      }],
+    },
   }];
 
   const columns: TableColumnConfig<any>[] = [{

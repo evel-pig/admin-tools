@@ -586,7 +586,7 @@ class TableSearchBar extends PureComponent<TableSearchBarProps, TableSearchBarSt
           <Select
             {...(props.antdSelectProps || {})}
             placeholder={props.placeholder}
-            allowClear={props.allowClear}
+            allowClear={props.allowClear !== undefined ? props.allowClear : true}
             mode={props.mode}
             style={{ minWidth: '150px' }}
             disabled={props.disabled}
