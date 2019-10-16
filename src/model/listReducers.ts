@@ -42,6 +42,11 @@ function makeHandleActions(listActionName, apiPath?): MakeHandleActionsResult {
   return {
     [listActionName.request](state, action) {
       let queryData = {};
+      if (apiPath) {
+        queryData = state[apiPath].fieldsValue;
+      } else {
+        queryData = state.fieldsValue;
+      }
       if (action.payload.except) {
         queryData = action.payload.except.fieldsValue || {};
       }
