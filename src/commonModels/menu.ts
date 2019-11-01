@@ -253,8 +253,8 @@ const model = createModel({
       [apiActionNames.getOperatorInfo.success](state, action) {
         return {
           ...state,
-          loading: false,
           ...getOperatorInfoConfig.handleSuccess(state, action),
+          loading: false,
         };
       },
       [apiActionNames.getOperatorInfo.error](state, action) {
