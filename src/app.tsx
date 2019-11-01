@@ -12,19 +12,27 @@ import { createTransform } from '@epig/luna/lib/persist';
 import DefaultLoadingComponent from './components/DefaultLoadingComponent';
 import { setDefaultLoadingComponent } from './components/DynamicComponent';
 import { ApiPath } from '@epig/luna/lib/model/apiHelper';
+import { setGetCommonParams } from '@epig/luna/lib/hooks/useApi';
 
 const apiReg = {
   api: /^api-/,
   error: /_error$/,
 };
 
+function getTokenFromStore(tokenState, tokenKeys) {
+  const token = {};
+  tokenKeys.forEach(key => {
+    if (typeof tokenState[key] !== 'undefined' && tokenState[key] !== null) {
+      token[key] = tokenState[key];
+    }
+  });
+  return token;
+}
+
 export const addTokenMiddleware = (tokenKeys = []) => store => next => action => {
   const tokenState = store.getState().token;
   if (tokenState) {
-    const token = {};
-    tokenKeys.forEach(key => {
-      token[key] = tokenState[key];
-    });
+    const token = getTokenFromStore(tokenState, tokenKeys);
     if (apiReg.api.test(action.type)) {
       let result = next({
         ...action,
@@ -242,6 +250,11 @@ export default class TTAdminApp {
       storeOptions.middlewares = [
         addTokenMiddleware(tokenKeys),
       ].concat(storeOptions.middlewares);
+      setGetCommonParams(() => {
+        const tokenState = this._core.store.getState().token || {};
+        const token = getTokenFromStore(tokenState, tokenKeys);
+        return token;
+      });
     }
     if (!storeOptions.noHandleRequestError) {
       storeOptions.middlewares = [

@@ -11,6 +11,7 @@ import { DatePicker, Form } from 'antd';
 import moment from 'moment';
 import useContainer from '../../../hooks/useContainer';
 import model, { Page1State } from './model';
+import { useApi } from '@epig/luna';
 
 export interface Page1Props {
   page1: Page1State;
@@ -22,6 +23,13 @@ export default function Page1(props: Page1Props) {
   const { push } = useContainer();
 
   const [options, setOptions] = React.useState([]);
+
+  useApi({
+    path: '/getuser',
+    data: {
+      id: 1,
+    },
+  });
 
   const searchs1: AdvanceSearchDecorator[] = [{
     type: 'Input',

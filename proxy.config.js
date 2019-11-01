@@ -50,6 +50,12 @@ var config = {
       ],
     },
   },
+  'POST /getUser': {
+    status: 0,
+    data: {
+      info: [{ id: 1, name: 'mary' }],
+    },
+  },
 }
 
 module.exports = config;
