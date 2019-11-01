@@ -23,6 +23,7 @@ export interface LoginOwnProps {
   noForgetPassword?: boolean;
   customForgetPassword?: () => React.ReactNode;
   requestParameterKeyName?: RequestParameterKeyName;
+  logo?: () => React.ReactNode;
 }
 
 interface LoginProps extends LoginOwnProps {
@@ -85,6 +86,7 @@ class Login extends BasicComponent<LoginProps, any> {
       <div className={getClassName()}>
         <div className={getClassName('top')}>
           <div className={getClassName('header')}>
+            {this.props.logo && <div>{this.props.logo()}</div>}
             <span className={getClassName('title')}>{this.props.app.appName}</span>
           </div>
         </div>
