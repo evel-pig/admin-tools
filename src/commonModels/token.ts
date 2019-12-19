@@ -24,7 +24,12 @@ getToken = defaultGetToken;
 
 export default createModel({
   modelName: 'token',
-  reducer: ({ createReducer }) => {
+  action: {
+    simple: {
+      setToken: 'setToken',
+    },
+  },
+  reducer: ({ simpleActionNames, createReducer }) => {
     return createReducer<any, any>({
       [loginModel.actionNames.api.login.success](state, action) {
         let res = action.payload.res;
@@ -53,6 +58,11 @@ export default createModel({
           newState[key] = null;
         });
         return newState;
+      },
+      [simpleActionNames.setToken](state, action) {
+        return {
+          token: action.payload.token,
+        };
       },
     }, {
     });
